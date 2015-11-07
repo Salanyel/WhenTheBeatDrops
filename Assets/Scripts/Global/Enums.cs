@@ -14,3 +14,8 @@ public enum PLAYERS
     Retroish,
     Baroque
 }
+
+public enum NEUTRAL_BEATS
+{
+    Neutral1 = 0
+};
