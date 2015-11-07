@@ -5,8 +5,9 @@ public class Tile : MonoBehaviour {
 
 	public Material[] m_colors;
 	public GameObject m_base;
+	public Material m_neutral;
 
-	private PLAYERS m_player;
+	public PLAYERS m_player;
 	private TILE_TYPE m_tileType;
 	private int m_unitNumbers;
 	private bool m_isMoved;
@@ -17,6 +18,18 @@ public class Tile : MonoBehaviour {
 		m_player = PLAYERS.None;
 		m_unitNumbers = 0;
 		m_isMoved = false;
+	}
+
+	void Update()
+	{
+		if (m_player != PLAYERS.None)
+		{
+			m_base.GetComponent<MeshRenderer> ().material =  m_colors [(int) m_player];
+		}
+		else
+		{
+			m_base.GetComponent<MeshRenderer> ().material =  m_neutral;
+		}
 	}
 
 	//Getter

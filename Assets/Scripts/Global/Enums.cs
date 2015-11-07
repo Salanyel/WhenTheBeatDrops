@@ -27,3 +27,13 @@ public enum GAME_STATE
 	EndOfCurrentPlayer,
 	EndOfTurn
 };
+
+public enum DIRECTIONS
+{
+	EAST, 
+	WEST,
+	NORTHEAST,
+	NORTHWEST,
+	SOUTHEAST,
+	SOUTHWEST
+};

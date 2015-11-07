@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameMode : MonoBehaviour {
 
@@ -135,6 +136,25 @@ public class GameMode : MonoBehaviour {
 		}
 	}
 
+	void setTheHexagonTMP(GameObject p_tile, float p_y, float p_x)
+	{
+		int p1x = 0;
+		int p1y = 0;
+		int p2x = 1;
+		int p2y = 1;
+
+		if (p_x == p1x && p_y == p1y)
+		{
+			Debug.Log ("P1 detected");
+			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Baroque);
+		}
+
+		if (p_x == p2x && p_y == p2y)
+		{
+			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Retroish);
+		}
+	}
+
 	void createTheMap()
 	{
 
@@ -144,7 +164,7 @@ public class GameMode : MonoBehaviour {
 		Vector3 tilePosition = Vector3.zero;
 		GameObject currentTile;
 
-		for (int height = 0; height < m_mapHeight; ++height)
+		for (float height = 0; height < m_mapHeight; ++height)
 		{
 			for (float width = 0; width < m_mapWidth; ++width)			
 			{
@@ -156,6 +176,7 @@ public class GameMode : MonoBehaviour {
 
 				currentTile = Instantiate(m_tilePrefab);
 				currentTile.transform.position = tilePosition;
+				setTheHexagonTMP(currentTile, height, width);
 			}
 		}
 	}
@@ -163,5 +184,74 @@ public class GameMode : MonoBehaviour {
 	void setGameState (GAME_STATE p_state)
 	{
 		m_gameState = p_state;
+	}
+
+	Vector2 getPerfectHexPosition(GameObject p_target)
+	{
+		
+		float x;
+		float y;
+		float currentX = p_target.transform.position.x;
+		float currentY = p_target.transform.position.y;
+		Vector2 result = Vector2.zero;
+
+		y = currentY / (0.75f * m_tilesUnit);
+		x = currentX - (y%2 * m_tilesUnit / 2);
+
+		result = new Vector2 (x, y);
+
+		return result;
+	}
+
+	List<DIRECTIONS> getBorders(GameObject p_target)
+	{
+		List<DIRECTIONS> directions = new List<DIRECTIONS>();
+
+		Vector2 position = getPerfectHexPosition (p_target);
+
+		if (position.y == 0)
+		{
+			addThisDirection(directions, DIRECTIONS.NORTHEAST);
+			addThisDirection(directions, DIRECTIONS.NORTHWEST);
+		}
+
+		if (position.y == m_mapHeight)
+		{
+			addThisDirection(directions, DIRECTIONS.SOUTHEAST);
+			addThisDirection(directions, DIRECTIONS.SOUTHWEST);
+		}
+
+		if (position.x == 0)
+		{
+			addThisDirection(directions, DIRECTIONS.WEST);
+
+			if (position.y%2 == 0)
+			{
+				addThisDirection(directions, DIRECTIONS.NORTHWEST);
+				addThisDirection(directions, DIRECTIONS.SOUTHWEST);
+			}
+		}
+
+		if (position.x == m_mapWidth)
+		{
+			addThisDirection(directions, DIRECTIONS.EAST);
+		
+			if (position.y%2 == 0)
+			{
+				addThisDirection(directions, DIRECTIONS.NORTHEAST);
+				addThisDirection(directions, DIRECTIONS.SOUTHEAST);
+			}
+		}
+
+		return directions;
+
+	}
+
+	void addThisDirection(List<DIRECTIONS> p_list, DIRECTIONS p_direction)
+	{
+		if (!p_list.Contains(p_direction))
+		{
+			p_list.Add(p_direction);
+		}
 	}
 }
