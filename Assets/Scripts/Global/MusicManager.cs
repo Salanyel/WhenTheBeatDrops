@@ -15,8 +15,12 @@ public class MusicManager : MonoBehaviour
 
     public List<AudioClip> m_playerJingles;
     public List<AudioClip> m_neutralJingles;
-    public List<List<AudioClip>> m_playerBeats;
     public List<AudioClip> m_neutralBeats;
+
+    public List<AudioClip> m_beatBaroque;
+    public List<AudioClip> m_beatRetroish;
+
+    List<List<AudioClip>> m_playerBeats;
 
     // Managing the current audio playing
     bool m_outro = false;
