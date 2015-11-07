@@ -7,7 +7,9 @@ public class Tile : MonoBehaviour {
 	public GameObject m_base;
 	public Material m_neutral;
 
-	public PLAYERS m_player;
+	[SerializeField]
+	private PLAYERS m_player;
+	[SerializeField]
 	private TILE_TYPE m_tileType;
 	private int m_unitNumbers;
 	private bool m_isMoved;
@@ -22,14 +24,7 @@ public class Tile : MonoBehaviour {
 
 	void Update()
 	{
-		if (m_player != PLAYERS.None)
-		{
-			m_base.GetComponent<MeshRenderer> ().material =  m_colors [(int) m_player];
-		}
-		else
-		{
-			m_base.GetComponent<MeshRenderer> ().material =  m_neutral;
-		}
+		setMaterial ();
 	}
 
 	//Getter
@@ -57,6 +52,8 @@ public class Tile : MonoBehaviour {
 	public void setPlayer(PLAYERS p_player)
 	{
 		m_player = p_player;
+		setMaterial ();
+
 	}
 
 	public void setTileType(TILE_TYPE p_type)
@@ -72,5 +69,18 @@ public class Tile : MonoBehaviour {
 	public void setIsMoved(bool p_moved)
 	{
 		m_isMoved = p_moved;
+	}
+
+	//OtherFunctions
+	void setMaterial()
+	{
+		if (m_player != PLAYERS.None)
+		{
+			m_base.GetComponent<MeshRenderer> ().material =  m_colors [(int) m_player];
+		}
+		else
+		{
+			m_base.GetComponent<MeshRenderer> ().material =  m_neutral;
+		}
 	}
 }

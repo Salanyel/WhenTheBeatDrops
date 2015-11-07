@@ -20,7 +20,9 @@ public enum NEUTRAL_BEATS
 
 public enum GAME_STATE
 {
-	PhaseBegins = 0,
+	Creation = 0,
+	InitTheMap,
+	PhaseBegins,
 	DisplayCurrentTurn,
 	InitCurrentTurn,
 	PlayCurrentPlayer,

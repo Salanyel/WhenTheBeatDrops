@@ -11,17 +11,32 @@ public class CameraResolution : MonoBehaviour {
 	private float m_ratio;
 	private Camera m_camera;
 
-	/*	-----
+    //limits of the camera motion
+    private Vector2 topLeft;
+    private Vector2 topRight;
+    private Vector2 bottomLeft;
+    private Vector2 bottomRight;
+
+    /*	-----
 		Return :
 		Parameters :
 		Function behavior : Function called at the creation of the game. Init the basic ratio of the camera and update the camera aspect
 	*/
-	void Start () {
+    void Start () {
 
 		m_camera = GameObject.FindGameObjectWithTag (Tags.m_mainCamera).GetComponent<Camera>();
 		m_baseRatio = calculateRatio(m_baseWidth, m_baseHeight);
 
-		updateCameraViewport ();
+        float mapWidth = PlayerPrefs.GetFloat(PlayerPreferences.m_mapWidth);
+        float mapHeight = PlayerPrefs.GetFloat(PlayerPreferences.m_mapHeight);
+        float tilesUnit = PlayerPrefs.GetFloat(PlayerPreferences.m_tilesUnit);
+
+        topLeft = new Vector2(-1 + m_baseWidth/2, 0.0f);
+        topRight = new Vector2(mapWidth + 1 - m_baseWidth / 2, 0.0f);
+        bottomLeft = new Vector2(-1+ m_baseWidth / 2, -mapHeight -1 + m_baseHeight / 2);
+        bottomRight = new Vector2(mapWidth + 1 - m_baseWidth / 2, -mapHeight - 1 + m_baseHeight / 2);
+
+        updateCameraViewport ();
 	}
 	
 	/*	-----
@@ -31,7 +46,36 @@ public class CameraResolution : MonoBehaviour {
 	*/
 	void Update () {
         transform.Translate(Input.GetAxis("Horizontal") * m_speed * Time.deltaTime, Input.GetAxis("Vertical") * m_speed * Time.deltaTime, 0);
-		updateCameraViewport ();
+
+        // Horizontal move by mouse
+        if (Input.mousePosition.x < (Screen.width * 0.33))
+        {
+            //the mouse is in the first third of the screen: camera moves left
+            transform.Translate(-m_speed * Time.deltaTime, 0, 0);
+            transform.position = new Vector3(Mathf.Max(transform.position.x, topLeft.x),transform.position.y,-4);
+        }
+        else if (Input.mousePosition.x > (Screen.width * 0.66))
+        {
+            //the mouse is in the last third of the screen: camera moves right
+            transform.Translate(m_speed * Time.deltaTime, 0, 0);
+            transform.position = new Vector3(Mathf.Min(transform.position.x, topRight.x), transform.position.y, -4);
+        }
+
+        //Vertical move by mouse
+        if (Input.mousePosition.y < (Screen.height * 0.33))
+        {
+            //the mouse is in the bottom third of the screen: camera moves down
+            transform.Translate(0, -m_speed * Time.deltaTime, 0);
+            transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y,bottomLeft.y), -4);
+        }
+        else if (Input.mousePosition.y > (Screen.height * 0.66))
+        {
+            //the mouse is in the top third of the screen: camera moves up
+            transform.Translate(0, m_speed * Time.deltaTime, 0);
+            transform.position = new Vector3(transform.position.x, Mathf.Min(transform.position.y, topLeft.y), -4);
+
+        }
+        updateCameraViewport ();
 	}
 
 	/*	-----
