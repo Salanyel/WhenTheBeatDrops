@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameMode : MonoBehaviour {
 
@@ -144,12 +145,13 @@ public class GameMode : MonoBehaviour {
 
 		if (p_x == p1x && p_y == p1y)
 		{
-			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Modern);
+			Debug.Log ("P1 detected");
+			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Baroque);
 		}
 
 		if (p_x == p2x && p_y == p2y)
 		{
-			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Classical);
+			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Retroish);
 		}
 	}
 
@@ -191,14 +193,65 @@ public class GameMode : MonoBehaviour {
 		float y;
 		float currentX = p_target.transform.position.x;
 		float currentY = p_target.transform.position.y;
-
 		Vector2 result = Vector2.zero;
 
-		y = currentY / (0.75 * m_tilesUnit);
+		y = currentY / (0.75f * m_tilesUnit);
 		x = currentX - (y%2 * m_tilesUnit / 2);
 
 		result = new Vector2 (x, y);
 
 		return result;
+	}
+
+	List<DIRECTIONS> getBorders(GameObject p_target)
+	{
+		List<DIRECTIONS> directions = new List<DIRECTIONS>();
+
+		Vector2 position = getPerfectHexPosition (p_target);
+
+		if (position.y == 0)
+		{
+			addThisDirection(directions, DIRECTIONS.NORTHEAST);
+			addThisDirection(directions, DIRECTIONS.NORTHWEST);
+		}
+
+		if (position.y == m_mapHeight)
+		{
+			addThisDirection(directions, DIRECTIONS.SOUTHEAST);
+			addThisDirection(directions, DIRECTIONS.SOUTHWEST);
+		}
+
+		if (position.x == 0)
+		{
+			addThisDirection(directions, DIRECTIONS.WEST);
+
+			if (position.y%2 == 0)
+			{
+				addThisDirection(directions, DIRECTIONS.NORTHWEST);
+				addThisDirection(directions, DIRECTIONS.SOUTHWEST);
+			}
+		}
+
+		if (position.x == m_mapWidth)
+		{
+			addThisDirection(directions, DIRECTIONS.EAST);
+		
+			if (position.y%2 == 0)
+			{
+				addThisDirection(directions, DIRECTIONS.NORTHEAST);
+				addThisDirection(directions, DIRECTIONS.SOUTHEAST);
+			}
+		}
+
+		return directions;
+
+	}
+
+	void addThisDirection(List<DIRECTIONS> p_list, DIRECTIONS p_direction)
+	{
+		if (!p_list.Contains(p_direction))
+		{
+			p_list.Add(p_direction);
+		}
 	}
 }
