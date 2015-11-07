@@ -195,6 +195,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 782d84c7916fa5f45bc07645084f1085, type: 2}
   - {fileID: 2100000, guid: 3421275415bab1e499fc0e870187d188, type: 2}
   m_base: {fileID: 175160}
+  m_neutral: {fileID: 2100000, guid: 8cf2005b232388c42a44b25cafb876b5, type: 2}
+  m_player: 0
+  m_tileType: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

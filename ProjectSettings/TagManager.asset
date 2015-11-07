@@ -8,6 +8,13 @@ TagManager:
   - GameMode
   - UI_ResultLog
   - MusicManager
+  - UI_ResultText
+  - UI_ResultButton
+  - UI_Turn
+  - UI_TurnText
+  - UI_endOfTheTurnButton
+  - UI_Player
+  - UI_PlayerText
   layers:
   - Default
   - TransparentFX
