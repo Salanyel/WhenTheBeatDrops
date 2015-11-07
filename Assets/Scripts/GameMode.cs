@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GameMode : MonoBehaviour {
 
@@ -9,30 +10,60 @@ public class GameMode : MonoBehaviour {
 	private float m_mapWidth;
 	private float m_mapHeight;
 	private float m_tilesUnit;
-
-	private bool m_isFinished;
+	
 	private int m_beatsNumber;
-	private int[] m_players;
+	private PLAYERS[] m_players;
 	private GAME_STATE m_gameState;
+	private int m_populationLimit;
+	private int m_numberOfPlayers;
+	private PLAYERS m_currentPlayer;
+
+	//Result screen
+	private PLAYERS m_winner;
+	public float m_fadingSpeed;
+	private float m_delay = 0f;
+	private GameObject m_resultButton;
+
+	//Turn screen
+	public float m_fadingSpeedTurn;
+
+	//End of the turn button
+	GameObject m_endOfTurn;
+
+	//Player tunr
+	public float m_fadingSpeedPlayerTurn;
 
 	void Start () {
-		if (PlayerPrefs.HasKey(PlayerPreferences.m_init))
+		/*if (PlayerPrefs.HasKey(PlayerPreferences.m_init))
 		{
 			PlayerPreferences.InitThePlayerPrefs();
-		}
+		}*/
+		PlayerPreferences.InitThePlayerPrefs();
 
 		setBoard ();
 		setPlayers ();
 
-		m_isFinished = false;
-		setGameState (GAME_STATE.DisplayCurrentTurn);
+		m_winner = PLAYERS.None;
+		setGameState (GAME_STATE.InitTheMap);
+
+		m_resultButton = GameObject.FindGameObjectWithTag(Tags.m_ui_resultButton);
+		m_endOfTurn = GameObject.FindGameObjectWithTag (Tags.m_ui_endOfTheTurnButton);
+
+		m_endOfTurn.SetActive (false);
+		m_resultButton.SetActive (false);
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
+
 		switch (m_gameState)
 		{
+		case GAME_STATE.InitTheMap :
+			InitTheMap();
+			InitTheMapFor2Players();
+			break;
+
 		case GAME_STATE.PhaseBegins :
 			phaseBegins();
 			break;
@@ -60,38 +91,110 @@ public class GameMode : MonoBehaviour {
 		default:
 			break;
 		}
-
-		Debug.Log ("Current state : " + m_gameState);
 	}
 
+	Color synthethiseFadingColor(Color p_color, float p_alpha)
+	{
+		Color result = new Color (p_color.r, p_color.g, p_color.b, p_alpha);
+		return result;
+	}
+
+	//Test if somebody has won the game
 	void phaseBegins()
 	{
-		if (m_isFinished)
-		{
-			//TODO Display écran des résultats
-		}
 
-		setGameState (GAME_STATE.DisplayCurrentTurn);
+		if (m_winner != PLAYERS.None)
+		{
+			Image panel = GameObject.FindGameObjectWithTag (Tags.m_ui_resultLog).GetComponent<Image> ();
+			Text text = GameObject.FindGameObjectWithTag (Tags.m_ui_resultText).GetComponent<Text> ();
+			float value;
+
+			text.text = "The game is finished.\n" + m_winner + " is the real beat !";
+			m_delay += Time.deltaTime;
+			value = (m_delay / m_fadingSpeed);
+			panel.color = synthethiseFadingColor(panel.color, value);
+			text .color = synthethiseFadingColor(text.color, value);
+
+			if (m_delay > m_fadingSpeed)
+			{
+				m_resultButton.SetActive (true);
+			}
+		}
+		else
+		{
+			m_delay = 0;
+			setGameState (GAME_STATE.DisplayCurrentTurn);
+		}
 	}
 
+	//Display current turn
 	void displayCurrentTurn()
 	{
-		//TODO : fade sur le numéro du tour
+		Image panel = GameObject.FindGameObjectWithTag (Tags.m_ui_turn).GetComponent<Image> ();
+		Text text = GameObject.FindGameObjectWithTag (Tags.m_ui_turnText).GetComponent<Text> ();
+		float value;
+
+		m_delay += Time.deltaTime;
+
+		if (m_delay < m_fadingSpeedTurn)
+		{
+			value = (m_delay / m_fadingSpeedTurn);
+			panel.color = synthethiseFadingColor(panel.color, value);
+			text .color = synthethiseFadingColor(text.color, value);
+			text.text = "Turn " + m_beatsNumber;
+		}
+		else if (m_delay < 2 * m_fadingSpeedTurn)
+		{
+			value = 1 - ((m_delay - m_fadingSpeedTurn) / m_fadingSpeedTurn);
+			panel.color = synthethiseFadingColor(panel.color, value);
+			text .color = synthethiseFadingColor(text.color, value);
+		}
+		else
+		{
+			m_delay = 0;
+			m_gameState = GAME_STATE.InitCurrentTurn;
+		}
 	}
 
+	//Sort the m_players Tab
 	void initCurrentTurn()
 	{
-		//TODO : Sort du tableau de players 
+		m_gameState = GAME_STATE.PlayCurrentPlayer;
+
+		if (m_numberOfPlayers < 3)
+		{
+			m_currentPlayer = m_players[0];
+			return;
+		}			
+
+		PLAYERS playerTmp = m_players[0];
+
+		for (int i = 1; i < m_numberOfPlayers; ++i)
+		{
+			m_players[i-1] = m_players[i];
+		}
+
+		m_currentPlayer = m_players[0];
+		m_players [m_numberOfPlayers] = playerTmp;
 	}
 
+	//Play all players
 	void playCurrentTurn()
 	{
+
+		//TODO : Display my log
+		m_endOfTurn.SetActive (true);
+
 		//TODO : Faire jouer le player de l'index X. Afficher "Tour de machin"
-		//TODO : faire pop des troupes
+
+
+		//TODO : faire pop des troupes sur chaque production que l'on controle (sans dépasser 4)
+
 	}
 
 	void endOfTurn()
 	{
+		m_endOfTurn.SetActive (false);
 		//TODO : Tester si la fin du tour correspond à un nouveau test de beats. 
 		//Si oui, tester qui est le meneur. S'il a gagné set m_isFinisehd.
 		//Sinon, lui demander quelle musique il veut jouer.
@@ -103,6 +206,8 @@ public class GameMode : MonoBehaviour {
 		m_mapWidth = PlayerPrefs.GetFloat (PlayerPreferences.m_mapWidth);
 		m_mapHeight = PlayerPrefs.GetFloat (PlayerPreferences.m_mapHeight);
 		m_tilesUnit = PlayerPrefs.GetFloat (PlayerPreferences.m_tilesUnit);
+		m_populationLimit = PlayerPrefs.GetInt (PlayerPreferences.m_populationLimit);
+		m_numberOfPlayers = PlayerPrefs.GetInt (PlayerPreferences.m_numberOfPlayers);
 
 		createTheMap ();
 	}
@@ -111,11 +216,11 @@ public class GameMode : MonoBehaviour {
 	{
 		int numberOfPlayers = PlayerPrefs.GetInt(PlayerPreferences.m_numberOfPlayers);
 
-		m_players = new int[numberOfPlayers];
+		m_players = new PLAYERS[numberOfPlayers];
 
 		for (int i = 0; i < numberOfPlayers; ++i)
 		{
-			m_players[i] = i + 1;
+			m_players[i] = (PLAYERS) (i + 1);
 		}
 
 		shufflePlayers (numberOfPlayers);
@@ -125,7 +230,7 @@ public class GameMode : MonoBehaviour {
 	{
 
 		int target;
-		int tmp;
+		PLAYERS tmp;
 
 		for (int i = 0; i < p_numbers; ++i)
 		{
@@ -136,22 +241,106 @@ public class GameMode : MonoBehaviour {
 		}
 	}
 
-	void setTheHexagonTMP(GameObject p_tile, float p_y, float p_x)
+	void InitTheMap()
 	{
-		int p1x = 0;
-		int p1y = 0;
-		int p2x = 1;
-		int p2y = 1;
 
-		if (p_x == p1x && p_y == p1y)
+		switch(m_numberOfPlayers)
 		{
-			Debug.Log ("P1 detected");
-			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Baroque);
+		case 2 :
+			InitTheMapFor2Players();
+			break;
+
+		default:
+			break;
+
 		}
 
-		if (p_x == p2x && p_y == p2y)
+		setGameState (GAME_STATE.PhaseBegins);
+
+	}
+
+	void InitTheMapFor2Players()
+	{
+		Vector2 p1 = new Vector2 (3, 2);
+		Vector2 p2 = new Vector2 (7, 6);
+		List<Vector2> controlPoints = new List<Vector2> ();
+		List<Vector2> villages = new List<Vector2> ();
+		List<Vector2> reprod = new List<Vector2> ();
+		List<Vector2> Caves = new List<Vector2> ();
+		GameObject[] hexes = GameObject.FindGameObjectsWithTag (Tags.m_tile);
+		Tile tile;
+
+		//Add ControlPoints
+		controlPoints.Add (new Vector2 (2, 2));
+		controlPoints.Add (new Vector2 (2, 4));
+		controlPoints.Add (new Vector2 (7, 6));
+		controlPoints.Add (new Vector2 (7, 9));
+		controlPoints.Add (new Vector2 (5, 9));
+
+		//Add Village
+		villages.Add (new Vector2 (6, 0));
+		villages.Add (new Vector2 (6, 2));
+		villages.Add (new Vector2 (4, 6));
+
+		//Add Reprod
+		reprod.Add (new Vector2 (1, 0));
+		reprod.Add (new Vector2 (1, 2));
+		reprod.Add (new Vector2 (9, 4));
+		reprod.Add (new Vector2 (9, 6));
+
+		//Add Caves
+		Caves.Add(new Vector2 (1, 1));
+		Caves.Add(new Vector2 (1, 3));
+		Caves.Add(new Vector2 (2, 4));
+		Caves.Add(new Vector2 (5, 8));
+		Caves.Add(new Vector2 (7, 8));
+		Caves.Add(new Vector2 (8, 9));
+
+		foreach(GameObject hex in hexes)
 		{
-			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Retroish);
+			if (getPerfectHexPosition(hex) == p1)
+			{
+				hex.name = "Player1Spawn";
+				tile = hex.GetComponent<Tile>();
+				tile.setPlayer(PLAYERS.Baroque);
+				tile.setTileType(TILE_TYPE.Production);
+			}
+
+			if (getPerfectHexPosition(hex) == p2)
+			{
+				hex.name = "Player2Spawn";
+				tile = hex.GetComponent<Tile>();
+				tile.setPlayer(PLAYERS.Retroish);
+				tile.setTileType(TILE_TYPE.Production);
+			}
+
+			if (controlPoints.Contains(getPerfectHexPosition(hex)))
+			{
+				hex.name = "ControlPoints";
+				tile = hex.GetComponent<Tile>();
+				tile.setTileType(TILE_TYPE.ControlPoint);
+			}
+
+			if (reprod.Contains(getPerfectHexPosition(hex)))
+			{
+				hex.name = "Production";
+				tile = hex.GetComponent<Tile>();
+				tile.setTileType(TILE_TYPE.Production);
+			}
+
+			if (villages.Contains(getPerfectHexPosition(hex)))
+			{
+				hex.name = "Village";
+				tile = hex.GetComponent<Tile>();
+				tile.setTileType(TILE_TYPE.Village);
+			}
+
+			if (Caves.Contains(getPerfectHexPosition(hex)))
+			{
+				hex.name = "Caves";
+				tile = hex.GetComponent<Tile>();
+				tile.setTileType(TILE_TYPE.Cave);
+			}
 		}
 	}
 
@@ -176,7 +365,6 @@ public class GameMode : MonoBehaviour {
 
 				currentTile = Instantiate(m_tilePrefab);
 				currentTile.transform.position = tilePosition;
-				setTheHexagonTMP(currentTile, height, width);
 			}
 		}
 	}
@@ -195,7 +383,7 @@ public class GameMode : MonoBehaviour {
 		float currentY = p_target.transform.position.y;
 		Vector2 result = Vector2.zero;
 
-		y = currentY / (0.75f * m_tilesUnit);
+		y = - currentY / (0.75f * m_tilesUnit);
 		x = currentX - (y%2 * m_tilesUnit / 2);
 
 		result = new Vector2 (x, y);
@@ -203,7 +391,7 @@ public class GameMode : MonoBehaviour {
 		return result;
 	}
 
-	List<DIRECTIONS> getBorders(GameObject p_target)
+	void displayBorders(GameObject p_target)
 	{
 		List<DIRECTIONS> directions = new List<DIRECTIONS>();
 
@@ -242,9 +430,6 @@ public class GameMode : MonoBehaviour {
 				addThisDirection(directions, DIRECTIONS.SOUTHEAST);
 			}
 		}
-
-		return directions;
-
 	}
 
 	void addThisDirection(List<DIRECTIONS> p_list, DIRECTIONS p_direction)
@@ -253,5 +438,10 @@ public class GameMode : MonoBehaviour {
 		{
 			p_list.Add(p_direction);
 		}
+	}
+
+	public void displacement(GameObject p_source, GameObject p_target)
+	{
+
 	}
 }
