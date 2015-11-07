@@ -8,7 +8,10 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 459492}
-  m_Layer: 0
+  - 114: {fileID: 11444118}
+  - 54: {fileID: 5461834}
+  - 64: {fileID: 6475394}
+  m_Layer: 9
   m_Name: Tile
   m_TagString: Tile
   m_Icon: {fileID: 0}
@@ -149,6 +152,49 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 139382}
   m_Mesh: {fileID: 4300000, guid: f7a47634382ed054db8f538d1adc3293, type: 3}
+--- !u!54 &5461834
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120200}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: .0500000007
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!64 &6475394
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120200}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Convex: 0
+  m_Mesh: {fileID: 4300000, guid: f7a47634382ed054db8f538d1adc3293, type: 3}
+--- !u!114 &11444118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24fb886f6bfef9e4fbf72e54bfefca0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_colors:
+  - {fileID: 2100000, guid: 5e7efdc7757b52b43990ec9036dbb4b8, type: 2}
+  - {fileID: 2100000, guid: 782d84c7916fa5f45bc07645084f1085, type: 2}
+  - {fileID: 2100000, guid: 3421275415bab1e499fc0e870187d188, type: 2}
+  m_base: {fileID: 175160}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
