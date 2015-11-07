@@ -9,10 +9,8 @@ public enum TILE_TYPE
 public enum PLAYERS
 {    
 	None = -1,
-	Modern = 0, 
-    Classical,
-    Retroish,
-    Baroque
+	Baroque = 0,
+    Retroish
 }
 
 public enum NEUTRAL_BEATS
