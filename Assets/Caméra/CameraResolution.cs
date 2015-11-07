@@ -5,6 +5,7 @@ public class CameraResolution : MonoBehaviour {
 
 	public int m_baseWidth;
 	public int m_baseHeight;
+    public float m_speed;
 
 	private float m_baseRatio;
 	private float m_ratio;
@@ -29,6 +30,7 @@ public class CameraResolution : MonoBehaviour {
 		Function behavior : Function called every frame. Reset the camera aspect ratio
 	*/
 	void Update () {
+        transform.Translate(Input.GetAxis("Horizontal") * m_speed * Time.deltaTime, Input.GetAxis("Vertical") * m_speed * Time.deltaTime, 0);
 		updateCameraViewport ();
 	}
 
