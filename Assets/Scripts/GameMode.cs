@@ -10,7 +10,7 @@ public class GameMode : MonoBehaviour {
 	private float m_tilesUnit;
 
 	void Start () {
-		if (PlayerPrefs.HasKey(PlayerPreferences.m_init))
+		if (!PlayerPrefs.HasKey(PlayerPreferences.m_init))
 		{
 			PlayerPreferences.InitThePlayerPrefs();
 		}

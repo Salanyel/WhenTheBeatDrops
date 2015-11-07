@@ -7,8 +7,9 @@ public enum TILE_TYPE
 };
 
 public enum PLAYERS
-{
-    Modern = 0, 
+{    
+	None = -1,
+	Modern = 0, 
     Classical,
     Retroish,
     Baroque

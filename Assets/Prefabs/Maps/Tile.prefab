@@ -8,6 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 459492}
+  - 114: {fileID: 11444118}
   m_Layer: 0
   m_Name: Tile
   m_TagString: Tile
@@ -149,6 +150,22 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 139382}
   m_Mesh: {fileID: 4300000, guid: f7a47634382ed054db8f538d1adc3293, type: 3}
+--- !u!114 &11444118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24fb886f6bfef9e4fbf72e54bfefca0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_colors:
+  - {fileID: 2100000, guid: 5e7efdc7757b52b43990ec9036dbb4b8, type: 2}
+  - {fileID: 2100000, guid: 782d84c7916fa5f45bc07645084f1085, type: 2}
+  - {fileID: 2100000, guid: 3421275415bab1e499fc0e870187d188, type: 2}
+  m_base: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
