@@ -15,6 +15,7 @@ public class MusicManager : MonoBehaviour
     bool intro = false;
     bool looping = false;
     bool outro = false;
+    PLAYERS currentPlayer;
 
     // Use this for initialization
     void Start ()
@@ -27,5 +28,16 @@ public class MusicManager : MonoBehaviour
     {
 	    
 	}
+
+    // Call that at the end of the turn
+    void changePeriod(PLAYERS nextPlayer)
+    {
+        
+    }
+
+    void startTurn()
+    {
+
+    }
 }
 
