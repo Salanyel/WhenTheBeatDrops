@@ -135,6 +135,24 @@ public class GameMode : MonoBehaviour {
 		}
 	}
 
+	void setTheHexagonTMP(GameObject p_tile, float p_y, float p_x)
+	{
+		int p1x = 0;
+		int p1y = 0;
+		int p2x = 1;
+		int p2y = 1;
+
+		if (p_x == p1x && p_y == p1y)
+		{
+			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Modern);
+		}
+
+		if (p_x == p2x && p_y == p2y)
+		{
+			p_tile.GetComponent<Tile>().setPlayer(PLAYERS.Classical);
+		}
+	}
+
 	void createTheMap()
 	{
 
@@ -144,7 +162,7 @@ public class GameMode : MonoBehaviour {
 		Vector3 tilePosition = Vector3.zero;
 		GameObject currentTile;
 
-		for (int height = 0; height < m_mapHeight; ++height)
+		for (float height = 0; height < m_mapHeight; ++height)
 		{
 			for (float width = 0; width < m_mapWidth; ++width)			
 			{
@@ -156,6 +174,7 @@ public class GameMode : MonoBehaviour {
 
 				currentTile = Instantiate(m_tilePrefab);
 				currentTile.transform.position = tilePosition;
+				setTheHexagonTMP(currentTile, height, width);
 			}
 		}
 	}
@@ -163,5 +182,23 @@ public class GameMode : MonoBehaviour {
 	void setGameState (GAME_STATE p_state)
 	{
 		m_gameState = p_state;
+	}
+
+	Vector2 getPerfectHexPosition(GameObject p_target)
+	{
+		
+		float x;
+		float y;
+		float currentX = p_target.transform.position.x;
+		float currentY = p_target.transform.position.y;
+
+		Vector2 result = Vector2.zero;
+
+		y = currentY / (0.75 * m_tilesUnit);
+		x = currentX - (y%2 * m_tilesUnit / 2);
+
+		result = new Vector2 (x, y);
+
+		return result;
 	}
 }

@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Tile
+  - GameMode
+  - UI_ResultLog
+  - MusicManager
   layers:
   - Default
   - TransparentFX
@@ -15,7 +18,7 @@ TagManager:
   - 
   - 
   - NoCollision
-  - 
+  - Tile
   - 
   - 
   - 

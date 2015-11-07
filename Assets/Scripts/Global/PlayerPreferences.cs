@@ -15,6 +15,6 @@ public class PlayerPreferences : MonoBehaviour {
 		PlayerPrefs.SetFloat (m_tilesUnit, 1);
 		PlayerPrefs.SetFloat (m_mapWidth, 10);
 		PlayerPrefs.SetFloat (m_mapHeight, 10);
-		PlayerPrefs.SetInt (m_numberOfPlayers, 3);
+		PlayerPrefs.SetInt (m_numberOfPlayers, 2);
 	}
 }

@@ -548,6 +548,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 11444118, guid: c325faacedc01314898ca604ca0e2adf, type: 2}
+      propertyPath: m_neutral
+      value: 
+      objectReference: {fileID: 2100000, guid: 8cf2005b232388c42a44b25cafb876b5, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c325faacedc01314898ca604ca0e2adf, type: 2}
   m_IsPrefabParent: 0
@@ -563,7 +567,7 @@ GameObject:
   - 114: {fileID: 1981897182}
   m_Layer: 5
   m_Name: ResultsLog
-  m_TagString: Untagged
+  m_TagString: UI_ResultLog
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
