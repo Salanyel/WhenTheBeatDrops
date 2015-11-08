@@ -881,12 +881,10 @@ public class GameMode : MonoBehaviour {
 
             if (stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1)
             {
-                Debug.Log("Semi Neighbor");
                 if(stopIdx.y == startIdx.y && stopIdx.x >= (startIdx.x - 1) && stopIdx.x <= (startIdx.x + 1)
                     || stopIdx.x >= (startIdx.x - 1 + (startIdx.y % 2)) && stopIdx.x <= (startIdx.x + (startIdx.y % 2)))
                 {
                    
-                    Debug.Log("Neighbor");
                     if (p_source.GetComponent<Tile>().getPlayer() != p_target.GetComponent<Tile>().getPlayer())
                     {
                         //It is an agression : we resolve it
@@ -913,6 +911,10 @@ public class GameMode : MonoBehaviour {
                     }
                     else 
                     {
+                        if (p_target.GetComponent<Tile>().getUnitNumbers() == 0)
+                        {
+                            p_target.GetComponent<Tile>().setIsMoved(true);
+                        }
                         //It is a unit movement: we move up to 4 unit in the tile
                         if (p_unitsNumber + p_target.GetComponent<Tile>().getUnitNumbers() <= m_unitsPerTile)
                         {
