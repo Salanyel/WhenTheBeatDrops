@@ -523,7 +523,7 @@ public class GameMode : MonoBehaviour {
 		return result;
 	}
 
-	void displayBorders(GameObject p_target)
+	public void displayBorders(GameObject p_target)
 	{
 		List<DIRECTIONS> directions = new List<DIRECTIONS>();
 
@@ -574,6 +574,25 @@ public class GameMode : MonoBehaviour {
 
 	public void displacement(GameObject p_source, GameObject p_target)
 	{
+        if(p_source != p_target)
+        {
+            Vector2 startIdx = getPerfectHexPosition(p_source);
+            Vector2 stopIdx = getPerfectHexPosition(p_target);
 
+            if (stopIdx.x >= startIdx.x -1)
+            {
+                if(stopIdx.x == startIdx.x + 1 && stopIdx.y == startIdx.y)
+                {
+                    //Separate case of the right neighbor. Has to be treated here due to the indexing method.
+                    Debug.Log("Drop on a neighbor");
+                }
+
+                if (stopIdx.x < startIdx.x +1  &&  stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1)
+                {
+                    // The target is a neighbor of the source
+                    Debug.Log("Drop on a neighbor");
+                }
+            }
+        }
 	}
 }

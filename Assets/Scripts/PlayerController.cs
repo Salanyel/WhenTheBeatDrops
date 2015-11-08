@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        //If the button is pressed, we initiate the drag and drop
         if (Input.GetButtonDown("Select unit"))
         {
             Debug.Log("getting input");
@@ -30,16 +32,17 @@ public class PlayerController : MonoBehaviour
                 if (hit.collider.tag == "Tile")
                 {
                     startingTile = hit.collider.gameObject.GetComponent<Tile>();
-                    if (startingTile.getUnitNumbers() > 0)
+                    if (true || startingTile.getUnitNumbers() > 0)
                     {
+                        gameMode.displayBorders(startingTile.gameObject);
                         dragging = true;
-
                     }
                 }
             }
 
         }
-        else if (Input.GetButtonUp("Select unit"))
+        //If we release the button while dragging, we drop the units on the tile
+        else if (dragging && Input.GetButtonUp("Select unit"))
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -47,7 +50,10 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.collider.tag == "Tile")
                 {
+                    Debug.Log("dropping action");
                     finishTile = hit.collider.gameObject.GetComponent<Tile>();
+                    gameMode.displacement(startingTile.gameObject, finishTile.gameObject);
+
                 }
             }
 

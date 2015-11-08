@@ -48,13 +48,13 @@ public class CameraResolution : MonoBehaviour {
         transform.Translate(Input.GetAxis("Horizontal") * m_speed * Time.deltaTime, Input.GetAxis("Vertical") * m_speed * Time.deltaTime, 0);
 
         // Horizontal move by mouse
-        if (Input.mousePosition.x < (Screen.width * 0.33))
+        if (Input.mousePosition.x < (Screen.width * 0.20))
         {
             //the mouse is in the first third of the screen: camera moves left
             transform.Translate(-m_speed * Time.deltaTime, 0, 0);
             transform.position = new Vector3(Mathf.Max(transform.position.x, topLeft.x),transform.position.y,-4);
         }
-        else if (Input.mousePosition.x > (Screen.width * 0.66))
+        else if (Input.mousePosition.x > (Screen.width * 0.80))
         {
             //the mouse is in the last third of the screen: camera moves right
             transform.Translate(m_speed * Time.deltaTime, 0, 0);
@@ -62,13 +62,13 @@ public class CameraResolution : MonoBehaviour {
         }
 
         //Vertical move by mouse
-        if (Input.mousePosition.y < (Screen.height * 0.33))
+        if (Input.mousePosition.y < (Screen.height * 0.20))
         {
             //the mouse is in the bottom third of the screen: camera moves down
             transform.Translate(0, -m_speed * Time.deltaTime, 0);
             transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y,bottomLeft.y), -4);
         }
-        else if (Input.mousePosition.y > (Screen.height * 0.66))
+        else if (Input.mousePosition.y > (Screen.height * 0.80))
         {
             //the mouse is in the top third of the screen: camera moves up
             transform.Translate(0, m_speed * Time.deltaTime, 0);
