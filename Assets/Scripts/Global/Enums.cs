@@ -20,6 +20,7 @@ public enum PLAYERS
 
 public enum NEUTRAL_BEATS
 {
+    None = -1,
     Neutral1 = 0
 };
 

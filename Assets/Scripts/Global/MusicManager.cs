@@ -10,6 +10,8 @@ using System.Collections.Generic;
 
 public class MusicManager : MonoBehaviour
 {
+    const float TIME_JINGLE = 6;
+
     //References
     AudioSource m_source;
 
@@ -25,6 +27,11 @@ public class MusicManager : MonoBehaviour
     // Managing the current audio playing
     bool m_outro = false;
     float m_fadeRate = 0.01f;
+
+    // currentlyPlaying stuff
+    PLAYERS currentPlayer;
+    NEUTRAL_BEATS currentNeutral;
+    int playerScore;
 
     // Use this for initialization
     void Start ()
@@ -68,36 +75,48 @@ public class MusicManager : MonoBehaviour
         this.m_outro = true;
     }
 
+    public void startTurnPlayer(PLAYERS newBeat, int playerScore)
+    {
+        this.playJinglePlayer();
+        this.Invoke("playTurnPlayer", TIME_JINGLE);
+    }
+
+    public void startTurnBeat(NEUTRAL_BEATS newBeat)
+    {
+        this.playJingleNeutral();
+        this.Invoke("playTurnNeutral", TIME_JINGLE);
+    }
+
     // Call when the new controlling player is announced
-     public void playJinglePlayer(PLAYERS newBeat)
+    void playJinglePlayer()
     {
         this.reset();
-        m_source.PlayOneShot(m_playerJingles[(int)newBeat], 1.0f);
-        Debug.Log("Playing jingle : " + newBeat);
+        m_source.PlayOneShot(m_playerJingles[(int)currentPlayer], 1.0f);
+        Debug.Log("Playing jingle : " + currentPlayer);
     }
 
     // Call when the turn start, to start the music of the player
-    public void playTurnPlayer(PLAYERS newBeat, int playerScore)
+    void playTurnPlayer()
     {
         this.reset();
         m_source.loop = true;
-        m_source.clip = m_playerBeats[(int)newBeat][playerScore];
+        m_source.clip = m_playerBeats[(int)currentPlayer][playerScore];
         m_source.Play();
     }
 
     // Call when a neutral beat is announced
-    public void playJingleNeutral(NEUTRAL_BEATS newBeat)
+    void playJingleNeutral()
     {
         this.reset();
-        m_source.PlayOneShot(m_neutralJingles[(int)newBeat], 1.0f);
+        m_source.PlayOneShot(m_neutralJingles[(int)currentNeutral], 1.0f);
     }
 
     // Call when the turn start, to start the neutral music
-    public void playTurnNeutral(NEUTRAL_BEATS newBeat)
+    void playTurnNeutral()
     {
         this.reset();
         m_source.loop = true;
-        m_source.clip = m_neutralBeats[(int)newBeat];
+        m_source.clip = m_neutralBeats[(int)currentNeutral];
         m_source.Play();
     }
 }
