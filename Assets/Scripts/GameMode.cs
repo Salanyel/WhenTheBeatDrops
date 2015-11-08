@@ -245,6 +245,9 @@ public class GameMode : MonoBehaviour {
 						tile.setUnitNumbers(nextValue);
 					}
 				}
+
+				tile.updateTokens();
+
 			}
 
 			m_gameState = GAME_STATE.EndOfCurrentPlayer;
@@ -405,7 +408,7 @@ public class GameMode : MonoBehaviour {
 		//Add ControlPoints
 		controlPoints.Add (new Vector2 (2, 2));
 		controlPoints.Add (new Vector2 (2, 4));
-		controlPoints.Add (new Vector2 (7, 6));
+		controlPoints.Add (new Vector2 (7, 2));
 		controlPoints.Add (new Vector2 (7, 9));
 		controlPoints.Add (new Vector2 (5, 9));
 

@@ -3,7 +3,12 @@ using System.Collections;
 
 public enum TILE_TYPE
 {
-	Cave, Village, ControlPoint, Neutral, Production, Block
+	Cave = 0, 
+	Village, 
+	ControlPoint, 
+	Production, 
+	Block,
+	Neutral
 };
 
 public enum PLAYERS

@@ -18,6 +18,7 @@ TagManager:
   - UI_PlayerHUD
   - UI_YourInfo
   - UI_OpponentsInfo
+  - Arrow
   layers:
   - Default
   - TransparentFX
