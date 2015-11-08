@@ -7,7 +7,14 @@ public class UILibrary : MonoBehaviour {
 
 	void Start()
 	{
-		m_gameMode = GameObject.FindGameObjectWithTag (Tags.m_gameMode).GetComponent<GameMode> ();
+		try
+		{
+			m_gameMode = GameObject.FindGameObjectWithTag (Tags.m_gameMode).GetComponent<GameMode> ();
+		}
+		catch (UnityException e)
+		{
+
+		}
 	}
 
 	public void returnToTheMainMenu()

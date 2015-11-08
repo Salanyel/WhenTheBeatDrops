@@ -76,7 +76,7 @@ public class TutorialManager : MonoBehaviour {
 			break;
 
 		case 2:
-			m_text.text = "Each player has a special song that he musts play to win !";
+			m_text.text = "Each player has a special song that he must play to win !";
 			break;
 
 		case 3:
@@ -110,7 +110,7 @@ public class TutorialManager : MonoBehaviour {
 			break;
 
 		case 8:
-			m_text.text = "Sometimes, ennemies notes are presents. \nIf you want to go on the targeted case, the quantity will make you win the fight.";
+			m_text.text = "Sometimes, enemy notes are presents. \nIf you want to go on the targeted tile, the quantity will make you win the fight.";
 			m_secondaryBase.GetComponent<MeshRenderer>().material = m_red;
 			m_token2.SetActive(false);
 			break;
@@ -125,7 +125,9 @@ public class TutorialManager : MonoBehaviour {
 			break;
 
 		case 10 :
-			m_text.text = "The villages will augment your troops capacities. \nBut remember. A hex can only contain 4 notes at once.";
+			m_text.text = "The villages will augment your troop capacities. \nBut remember. A hex can only contain 4 notes at once.";
+			m_cave.SetActive(false);
+			m_village.SetActive(true);
 			break;
 
 		case 11 :

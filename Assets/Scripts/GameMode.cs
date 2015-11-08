@@ -224,10 +224,6 @@ public class GameMode : MonoBehaviour {
 		Text text = GameObject.FindGameObjectWithTag (Tags.m_ui_playerText).GetComponent<Text> ();
 		float value;
 
-		//Display the HUD
-		m_playerHUD.SetActive (true);
-		//updatePlayerHUD ();
-
 		//Display "Turn of ..."
 		m_delay += Time.deltaTime;
 
@@ -291,6 +287,15 @@ public class GameMode : MonoBehaviour {
 	//Update the HUD to display the correct amount of units
 	void updatePlayerHUD()
 	{
+		//Display the HUD
+		m_playerHUD.SetActive (true);
+
+		if (Input.GetButtonUp("EndOfTurn"))
+		{
+			endTheCurrentPlayerTurn();
+			return;
+		}
+
         // Text references
         Text lText = GameObject.FindGameObjectWithTag(Tags.m_ui_yourInfo).GetComponent<Text>();
         Text rText = GameObject.FindGameObjectWithTag(Tags.m_ui_opponentsInfo).GetComponent<Text>();
