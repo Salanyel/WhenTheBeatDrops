@@ -15,6 +15,9 @@ public class Tags : MonoBehaviour {
 	public static string m_ui_endOfTheTurnButton = "UI_endOfTheTurnButton";
 	public static string m_ui_player = "UI_Player";
 	public static string m_ui_playerText = "UI_PlayerText";
+	public static string m_ui_playerHUD = "UI_PlayerHUD";
+	public static string m_ui_yourInfo = "UI_YourInfo";
+	public static string m_ui_opponentsInfo = "UI_OpponentsInfo";
 
 
 }

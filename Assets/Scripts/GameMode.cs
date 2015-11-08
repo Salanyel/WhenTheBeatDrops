@@ -17,6 +17,12 @@ public class GameMode : MonoBehaviour {
 	private int m_populationLimit;
 	private int m_numberOfPlayers;
 	private PLAYERS m_currentPlayer;
+	private int m_currentPlayerIndex;
+	private int m_unitsSpawnNumber;
+	private int m_unitsPerTile;
+	private int m_beatsFrequency;
+	private int m_beatsToWin;
+	private int[] m_victoryPoint;
 
 	//Result screen
 	private PLAYERS m_winner;
@@ -27,8 +33,9 @@ public class GameMode : MonoBehaviour {
 	//Turn screen
 	public float m_fadingSpeedTurn;
 
-	//End of the turn button
-	GameObject m_endOfTurn;
+	//HUD of the players
+	GameObject m_playerHUD;
+	GameObject m_endOfTurnButton;
 
 	//Player tunr
 	public float m_fadingSpeedPlayerTurn;
@@ -47,9 +54,11 @@ public class GameMode : MonoBehaviour {
 		setGameState (GAME_STATE.InitTheMap);
 
 		m_resultButton = GameObject.FindGameObjectWithTag(Tags.m_ui_resultButton);
-		m_endOfTurn = GameObject.FindGameObjectWithTag (Tags.m_ui_endOfTheTurnButton);
+		m_playerHUD = GameObject.FindGameObjectWithTag (Tags.m_ui_playerHUD);
+		m_endOfTurnButton = GameObject.FindGameObjectWithTag (Tags.m_ui_endOfTheTurnButton);
 
-		m_endOfTurn.SetActive (false);
+		m_endOfTurnButton.SetActive (false);
+		m_playerHUD.SetActive (false);
 		m_resultButton.SetActive (false);
 	}
 	
@@ -81,7 +90,7 @@ public class GameMode : MonoBehaviour {
 			break;
 
 		case GAME_STATE.EndOfCurrentPlayer :
-						
+			updatePlayerHUD();
 			break;
 
 		case GAME_STATE.EndOfTurn :
@@ -160,6 +169,7 @@ public class GameMode : MonoBehaviour {
 	void initCurrentTurn()
 	{
 		m_gameState = GAME_STATE.PlayCurrentPlayer;
+		m_currentPlayerIndex = 0;
 
 		if (m_numberOfPlayers < 3)
 		{
@@ -181,24 +191,142 @@ public class GameMode : MonoBehaviour {
 	//Play all players
 	void playCurrentTurn()
 	{
+		Image panel = GameObject.FindGameObjectWithTag (Tags.m_ui_player).GetComponent<Image> ();
+		Text text = GameObject.FindGameObjectWithTag (Tags.m_ui_playerText).GetComponent<Text> ();
+		float value;
 
-		//TODO : Display my log
-		m_endOfTurn.SetActive (true);
+		//Display the HUD
+		m_playerHUD.SetActive (true);
 
-		//TODO : Faire jouer le player de l'index X. Afficher "Tour de machin"
+		//Display "Turn of ..."
+		m_delay += Time.deltaTime;
 
+		if (m_delay < m_fadingSpeedPlayerTurn)
+		{
+			value = (m_delay / m_fadingSpeedPlayerTurn);
+			panel.color = synthethiseFadingColor(panel.color, value);
+			text .color = synthethiseFadingColor(text.color, value);
+			text.text = "Turn of " + (PLAYERS) m_currentPlayer;
+		}
+		else if (m_delay < 2 * m_fadingSpeedPlayerTurn)
+		{
+			value = 1 - ((m_delay - m_fadingSpeedPlayerTurn) / m_fadingSpeedPlayerTurn);
+			panel.color = synthethiseFadingColor(panel.color, value);
+			text .color = synthethiseFadingColor(text.color, value);
+		}
+		else
+		{
+			//Display the end of turn button
+			m_endOfTurnButton.SetActive(true);
 
-		//TODO : faire pop des troupes sur chaque production que l'on controle (sans dépasser 4)
+			//Create new units
+			GameObject[] hexes = GameObject.FindGameObjectsWithTag(Tags.m_tile);
+			Tile tile;
+			int currentUnitNumbers;
+			int nextValue;
 
+			foreach(GameObject hex in hexes)
+			{
+				tile = hex.GetComponent<Tile>();
+				if (tile.getPlayer() == m_currentPlayer)
+				{
+					if (tile.getTileType() == TILE_TYPE.Production)
+					{
+						currentUnitNumbers = tile.getUnitNumbers();
+						if (currentUnitNumbers + m_unitsSpawnNumber > m_unitsPerTile)
+						{
+							nextValue = m_unitsPerTile;
+						}
+						else
+						{
+							nextValue = currentUnitNumbers + m_unitsSpawnNumber;
+						}
+
+						tile.setUnitNumbers(nextValue);
+					}
+				}
+			}
+
+			m_gameState = GAME_STATE.EndOfCurrentPlayer;
+		}
+	}
+
+	//TODO : Update the HUD to display the correct amount of units
+	void updatePlayerHUD()
+	{
+
+	}
+
+	//Function triggered by the "EndOfTurn" button
+	public void endTheCurrentPlayerTurn()
+	{
+		//Hide the end of turn button
+		m_endOfTurnButton.SetActive(false);
+
+		m_delay = 0;
+		++m_currentPlayerIndex;
+
+		if (m_currentPlayerIndex < m_numberOfPlayers)
+		{
+			m_currentPlayer = m_players[m_currentPlayerIndex];
+			setGameState(GAME_STATE.PlayCurrentPlayer);
+		}
+		else
+		{
+			setGameState(GAME_STATE.EndOfTurn);
+		}
 	}
 
 	void endOfTurn()
 	{
-		m_endOfTurn.SetActive (false);
-		//TODO : Tester si la fin du tour correspond à un nouveau test de beats. 
-		//Si oui, tester qui est le meneur. S'il a gagné set m_isFinisehd.
-		//Sinon, lui demander quelle musique il veut jouer.
-		//Lancer le tour suivant
+		Debug.Log ("End of turn");
+		m_delay = 0;
+		m_playerHUD.SetActive (false);
+		int[] controlPoints = new int[m_numberOfPlayers];
+
+		Debug.Log ("Current turn : " + m_beatsNumber + " / " + m_beatsFrequency);
+
+		//Test if its time to score
+		if (m_beatsNumber % m_beatsFrequency == 0)
+		{
+
+			for (int i = 0; i < m_numberOfPlayers; ++i)
+			{
+				controlPoints[i] = 0;
+			}
+
+			GameObject[] hexes = GameObject.FindGameObjectsWithTag(Tags.m_tile);
+			Tile tile;
+
+			foreach(GameObject hex in hexes)
+			{
+				tile = hex.GetComponent<Tile>();
+				if (tile.getTileType() == TILE_TYPE.ControlPoint && tile.getPlayer() != PLAYERS.None)
+				{
+					controlPoints[(int) tile.getPlayer()] ++;
+				}
+			}
+
+			//TODO : Get the player with the more control points under its control
+
+			//TODO : In case of equality play a random songs
+
+			//TODO : if there is no winner, the last more control point choose the next song
+
+			//Test if someOne as won
+			for (int i = 0; i < m_numberOfPlayers; ++i)
+			{
+				if (m_victoryPoint[i] >= m_beatsToWin)
+				{
+					m_winner = (PLAYERS) i;
+					//TODO Laucnh the win music
+				}
+			}
+
+		}
+
+		m_beatsNumber++;
+		setGameState(GAME_STATE.PhaseBegins);
 	}
 
 	void setBoard()
@@ -208,22 +336,26 @@ public class GameMode : MonoBehaviour {
 		m_tilesUnit = PlayerPrefs.GetFloat (PlayerPreferences.m_tilesUnit);
 		m_populationLimit = PlayerPrefs.GetInt (PlayerPreferences.m_populationLimit);
 		m_numberOfPlayers = PlayerPrefs.GetInt (PlayerPreferences.m_numberOfPlayers);
+		m_unitsSpawnNumber = PlayerPrefs.GetInt (PlayerPreferences.m_unitsSpawn);
+		m_unitsPerTile = PlayerPrefs.GetInt(PlayerPreferences.m_unitsPerTile);
+		m_beatsFrequency = PlayerPrefs.GetInt(PlayerPreferences.m_beatsFrequency);
+		m_beatsToWin = PlayerPrefs.GetInt(PlayerPreferences.m_beatsToWin);
 
 		createTheMap ();
 	}
 
 	void setPlayers()
 	{
-		int numberOfPlayers = PlayerPrefs.GetInt(PlayerPreferences.m_numberOfPlayers);
+		m_players = new PLAYERS[m_numberOfPlayers];
+		m_victoryPoint = new int[m_numberOfPlayers];
 
-		m_players = new PLAYERS[numberOfPlayers];
-
-		for (int i = 0; i < numberOfPlayers; ++i)
+		for (int i = 0; i < m_numberOfPlayers; ++i)
 		{
-			m_players[i] = (PLAYERS) (i + 1);
+			m_players[i] = (PLAYERS) (i);
+			m_victoryPoint[i] = 0;
 		}
 
-		shufflePlayers (numberOfPlayers);
+		shufflePlayers (m_numberOfPlayers);
 	}
 
 	void shufflePlayers(int p_numbers)
@@ -255,8 +387,8 @@ public class GameMode : MonoBehaviour {
 
 		}
 
+		m_beatsNumber = 1;
 		setGameState (GAME_STATE.PhaseBegins);
-
 	}
 
 	void InitTheMapFor2Players()
