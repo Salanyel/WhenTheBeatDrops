@@ -221,12 +221,16 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 426176, guid: f9a8ec77318f76448a905152eaa7652f, type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 121106, guid: f9a8ec77318f76448a905152eaa7652f, type: 2}
       propertyPath: m_TagString
       value: GameMode
       objectReference: {fileID: 0}
+    - target: {fileID: 11445578, guid: f9a8ec77318f76448a905152eaa7652f, type: 2}
+      propertyPath: m_tilePrefab
+      value: 
+      objectReference: {fileID: 164018, guid: c325faacedc01314898ca604ca0e2adf, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f9a8ec77318f76448a905152eaa7652f, type: 2}
   m_IsPrefabParent: 0
