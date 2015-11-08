@@ -25,6 +25,7 @@ public class Tile : MonoBehaviour {
 	private Vector3 m_pointFroEnvironment;
 	[SerializeField]
 	private GameObject m_token;
+	private GameMode m_gameMode;
 
 	// Use this for initialization
 	void Start () {
@@ -34,6 +35,7 @@ public class Tile : MonoBehaviour {
 		m_isMoved = false;
 		m_environment = null;
 		m_token = null;
+		m_gameMode = GameObject.FindGameObjectWithTag (Tags.m_gameMode).GetComponent<GameMode> ();
 	}
 
 	void Update()
@@ -50,6 +52,20 @@ public class Tile : MonoBehaviour {
 			m_environment = (GameObject) Instantiate(environment, environment.transform.position, environment.transform.rotation);
 			m_environment.transform.parent = gameObject.transform;
 			m_environment.transform.position = m_environmentPosition[(int) m_tileType] + transform.position;
+		}
+
+
+		//Test for the cave
+		if (m_unitNumbers > 0 && m_tileType == TILE_TYPE.Cave)
+		{
+			if (m_gameMode.getCurrentPlayer() == m_player && m_unitNumbers > 0)
+			{
+				m_token.SetActive(true);
+			}
+			else
+			{
+				m_token.SetActive(false);
+			}
 		}
 	}
 
@@ -113,7 +129,7 @@ public class Tile : MonoBehaviour {
 	public void updateTokens()
 	{
 		GameObject token;
-		
+
 		if (m_unitNumbers > 0)
 		{
 			if (m_token != null)
@@ -125,6 +141,14 @@ public class Tile : MonoBehaviour {
 			m_token = (GameObject) Instantiate(token, token.transform.position, token.transform.rotation);
 			m_token.transform.parent = gameObject.transform;
 			m_token.transform.position = m_tokenPosition + transform.position;
+		}
+		else
+		{
+			if (m_token != null)
+			{
+				Destroy(m_token);
+				m_token = null;
+			}
 		}
 	}
 }

@@ -31,6 +31,10 @@ public class PlayerController : MonoBehaviour
                 if (hit.collider.tag == "Tile")
                 {
                     startingTile = hit.collider.gameObject.GetComponent<Tile>();
+
+					if (startingTile.getPlayer() != gameMode.getCurrentPlayer())
+						return;
+
                     if (!startingTile.isMoved() && startingTile.getUnitNumbers() > 0)
                     {
                         gameMode.displayBorders(startingTile.gameObject);
@@ -38,7 +42,6 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
-
         }
         //If we release the button while dragging, we drop the units on the tile
         else if (dragging && Input.GetButtonUp("Select unit"))
@@ -49,7 +52,6 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.collider.tag == "Tile")
                 {
-                    Debug.Log("dropping action");
                     finishTile = hit.collider.gameObject.GetComponent<Tile>();
                     gameMode.displacement(startingTile.gameObject, finishTile.gameObject);
 

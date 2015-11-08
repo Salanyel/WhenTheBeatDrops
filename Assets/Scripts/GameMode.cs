@@ -197,6 +197,7 @@ public class GameMode : MonoBehaviour {
 
 		//Display the HUD
 		m_playerHUD.SetActive (true);
+		//updatePlayerHUD ();
 
 		//Display "Turn of ..."
 		m_delay += Time.deltaTime;
@@ -228,6 +229,10 @@ public class GameMode : MonoBehaviour {
 			foreach(GameObject hex in hexes)
 			{
 				tile = hex.GetComponent<Tile>();
+
+				//Reset the possibility to move the units
+				tile.setIsMoved(false);
+
 				if (tile.getPlayer() == m_currentPlayer)
 				{
 					if (tile.getTileType() == TILE_TYPE.Production)
@@ -254,7 +259,7 @@ public class GameMode : MonoBehaviour {
 		}
 	}
 
-	//TODO : Update the HUD to display the correct amount of units
+	//Update the HUD to display the correct amount of units
 	void updatePlayerHUD()
 	{
         // Text references
@@ -267,8 +272,6 @@ public class GameMode : MonoBehaviour {
 
         List<int> controlPoints = new List<int>();
         List<int> units = new List<int>();
-
-        Debug.Log("NUMBER OF PLAYERS : " + m_numberOfPlayers);
 
         for (int i = 0; i < m_numberOfPlayers; ++i)
         {
@@ -293,14 +296,13 @@ public class GameMode : MonoBehaviour {
                 }
 
                 //  If there are units on it, add to counter
-                Debug.Log("tile owned by  : " + tile.getPlayer());
                 units[(int)tile.getPlayer()] += tile.getUnitNumbers();
             }
         }
 
         lText.text = "Your units number : " + units[(int)m_currentPlayer] + "\n Your control points : " + controlPoints[(int)m_currentPlayer] + "\n Your current score : " + m_victoryPoint[(int)m_currentPlayer] + " / 3";
 
-        string tempText = "";
+		string tempText = "Player : Units / Control // Current score\n";
         
         for (int i = 0; i < m_numberOfPlayers; ++i)
         {
@@ -331,7 +333,6 @@ public class GameMode : MonoBehaviour {
 
 	void endOfTurn()
 	{
-		Debug.Log ("End of turn");
 		m_delay = 0;
 		m_playerHUD.SetActive (false);
 		int[] controlPoints = new int[m_numberOfPlayers];
@@ -341,6 +342,7 @@ public class GameMode : MonoBehaviour {
 		//Test if its time to score
 		if (m_beatsNumber % m_beatsFrequency == 0)
 		{
+			PLAYERS beatsWinner;
 
 			for (int i = 0; i < m_numberOfPlayers; ++i)
 			{
@@ -360,8 +362,31 @@ public class GameMode : MonoBehaviour {
 			}
 
 			//TODO : Get the player with the more control points under its control
+			beatsWinner = (PLAYERS) 0;
+			for (int i = 1; i < m_numberOfPlayers; ++i)
+			{
+				if (controlPoints[i] > controlPoints[i-1])
+				{
+					beatsWinner = (PLAYERS) i;
+				}
+			}
 
-			//TODO : In case of equality play a random songs
+			bool equality = false;
+			for (int i = 0; i < m_numberOfPlayers; ++i)
+			{
+				if ((PLAYERS) i != beatsWinner)
+				{
+					if (controlPoints[i] == controlPoints[(int) beatsWinner])
+					{
+						equality = true;
+					}
+				}
+			}
+
+			if (equality)
+			{
+				//TODO : Play a random neutral song
+			}
 
 			//TODO : if there is no winner, the last more control point choose the next song
 
@@ -374,7 +399,6 @@ public class GameMode : MonoBehaviour {
 					//TODO Laucnh the win music
 				}
 			}
-
 		}
 
 		m_beatsNumber++;
@@ -631,6 +655,8 @@ public class GameMode : MonoBehaviour {
             Vector2 startIdx = getPerfectHexPosition(p_source);
             Vector2 stopIdx = getPerfectHexPosition(p_target);
 
+			Debug.Log (startIdx + " ==> " + stopIdx);
+
             if (stopIdx.x >= startIdx.x -1)
             {
                 if ((stopIdx.x < startIdx.x +1  &&  stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1) 
@@ -654,11 +680,18 @@ public class GameMode : MonoBehaviour {
                         p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
 
                         p_source.GetComponent<Tile>().setUnitNumbers(0);
-
                     }
+
+					p_source.GetComponent<Tile>().updateTokens();
+					p_target.GetComponent<Tile>().updateTokens();
                 }
             }
         }
+	}
+
+	public PLAYERS getCurrentPlayer()
+	{
+		return m_currentPlayer;
 	}
 }
 

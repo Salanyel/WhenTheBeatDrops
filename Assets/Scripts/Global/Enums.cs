@@ -32,7 +32,8 @@ public enum GAME_STATE
 	InitCurrentTurn,
 	PlayCurrentPlayer,
 	EndOfCurrentPlayer,
-	EndOfTurn
+	EndOfTurn,
+	WaitingForMusic
 };
 
 public enum DIRECTIONS
