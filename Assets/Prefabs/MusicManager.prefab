@@ -113,8 +113,10 @@ MonoBehaviour:
   m_playerJingles:
   - {fileID: 8300000, guid: 24ee06e3cde0c764986c22c5b911b77d, type: 3}
   - {fileID: 8300000, guid: 0d41c1b908bba4b4db352ed8b95ea7de, type: 3}
-  m_neutralJingles: []
-  m_neutralBeats: []
+  m_neutralJingles:
+  - {fileID: 8300000, guid: b7ef0835c923017479066572e49d4af9, type: 3}
+  m_neutralBeats:
+  - {fileID: 8300000, guid: c49841cc7176f9e418aede6746358609, type: 3}
   m_beatBaroque:
   - {fileID: 8300000, guid: 115c203691f1a0348adda3c8a694522e, type: 3}
   m_beatRetroish:
