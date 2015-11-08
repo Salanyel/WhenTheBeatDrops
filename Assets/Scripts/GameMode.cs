@@ -500,7 +500,7 @@ public class GameMode : MonoBehaviour {
 			if (m_victoryPoint[i] >= m_beatsToWin)
 			{
 				m_winner = (PLAYERS) i;
-				//TODO Laucnh the win music
+                m_musicManager.victory(m_winner);
 			}
 		}
 

@@ -23,6 +23,7 @@ public class MusicManager : MonoBehaviour
     public List<AudioClip> m_beatRetroish;
 
     List<List<AudioClip>> m_playerBeats;
+    public List<AudioClip> m_victories;
 
     // Managing the current audio playing
     bool m_outro = false;
@@ -85,6 +86,13 @@ public class MusicManager : MonoBehaviour
     {
         this.playJingleNeutral();
         this.Invoke("playTurnNeutral", TIME_JINGLE);
+    }
+
+    public void victory(PLAYERS player)
+    {
+        this.reset();
+        m_source.clip = m_victories[(int)currentPlayer];
+        m_source.Play();
     }
 
     // Call when the new controlling player is announced
