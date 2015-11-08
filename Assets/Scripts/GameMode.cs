@@ -3,9 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
+
 public class GameMode : MonoBehaviour {
 
-	public GameObject m_tilePrefab;
+    // CONSTANTS
+    public const int MAX_NUMBER_OF_PLAYERS = 2;
+    public const int MAX_NUMBER_OF_NEUTRAL_BEATS = 1;
+
+    public GameObject m_tilePrefab;
 
 	private float m_mapWidth;
 	private float m_mapHeight;
@@ -44,7 +49,17 @@ public class GameMode : MonoBehaviour {
 	private PLAYERS m_lastWinner;
 	private GameObject[] m_songsButton;
 
-	void Start () {
+    // Song Management
+    // if isPlayerBeat == true, we're playing the currently selected playerBeat. Else, playing the neutral beat
+    bool m_song_isPlayerBeat;
+    PLAYERS m_song_playerBeat;
+    NEUTRAL_BEATS m_song_neutralBeat;
+    MusicManager m_musicManager;
+
+
+    void Start () {
+        m_musicManager = GameObject.FindGameObjectWithTag(Tags.m_musicManager).GetComponent<MusicManager>();
+
 		/*if (PlayerPrefs.HasKey(PlayerPreferences.m_init))
 		{
 			PlayerPreferences.InitThePlayerPrefs();
@@ -455,7 +470,13 @@ public class GameMode : MonoBehaviour {
 		else
 		{
 			m_delay = 0;
-			//TODO : Launch a random song
+            
+            // Launching a random song
+            m_song_isPlayerBeat = false;
+            m_song_neutralBeat = (NEUTRAL_BEATS) Random.Range(0, MAX_NUMBER_OF_NEUTRAL_BEATS);
+
+            m_musicManager.startTurnBeat(m_song_neutralBeat);
+
 			setGameState(GAME_STATE.PhaseBegins);
 		}
 	}
@@ -463,13 +484,12 @@ public class GameMode : MonoBehaviour {
 	public void selectMySong()
 	{
 		m_victoryPoint [(int)m_lastWinner]++;
-		m_lastWinner = PLAYERS.None;
-		m_delay = 0;
 
-		//TODO launch my SONG
+        m_musicManager.startTurnPlayer(m_lastWinner, m_victoryPoint[(int)m_lastWinner]);
+
 		clearHUD ();
 
-		//Test if someOne as won
+		//Test if someone as won
 		for (int i = 0; i < m_numberOfPlayers; ++i)
 		{
 			if (m_victoryPoint[i] >= m_beatsToWin)
@@ -480,7 +500,10 @@ public class GameMode : MonoBehaviour {
 		}
 
 		setGameState (GAME_STATE.PhaseBegins);
-	}
+
+        m_lastWinner = PLAYERS.None;
+        m_delay = 0;
+    }
 
 	void clearHUD()
 	{

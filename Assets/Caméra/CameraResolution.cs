@@ -31,10 +31,10 @@ public class CameraResolution : MonoBehaviour {
         float mapHeight = PlayerPrefs.GetFloat(PlayerPreferences.m_mapHeight);
         float tilesUnit = PlayerPrefs.GetFloat(PlayerPreferences.m_tilesUnit);
 
-        topLeft = new Vector2(-1 + m_baseWidth/2, 0.0f);
-        topRight = new Vector2(mapWidth + 1 - m_baseWidth / 2, 0.0f);
-        bottomLeft = new Vector2(-1+ m_baseWidth / 2, -mapHeight -1 + m_baseHeight / 2);
-        bottomRight = new Vector2(mapWidth + 1 - m_baseWidth / 2, -mapHeight - 1 + m_baseHeight / 2);
+        topLeft = new Vector2(2.5f, -3.5f);
+        topRight = new Vector2(6.5f, -3.5f);
+        bottomLeft = new Vector2(2.5f, -8);
+        bottomRight = new Vector2(6.5f, -8);
 
         updateCameraViewport ();
 	}
@@ -45,16 +45,15 @@ public class CameraResolution : MonoBehaviour {
 		Function behavior : Function called every frame. Reset the camera aspect ratio
 	*/
 	void Update () {
-        transform.Translate(Input.GetAxis("Horizontal") * m_speed * Time.deltaTime, Input.GetAxis("Vertical") * m_speed * Time.deltaTime, 0);
-
-        // Horizontal move by mouse
-        if (Input.mousePosition.x < (Screen.width * 0.20))
+        
+        // Horizontal move
+        if (Input.mousePosition.x < (Screen.width * 0.10) || Input.GetAxis("Horizontal") < 0)
         {
             //the mouse is in the first third of the screen: camera moves left
             transform.Translate(-m_speed * Time.deltaTime, 0, 0);
             transform.position = new Vector3(Mathf.Max(transform.position.x, topLeft.x),transform.position.y,-4);
         }
-        else if (Input.mousePosition.x > (Screen.width * 0.80))
+        else if (Input.mousePosition.x > (Screen.width * 0.90) || Input.GetAxis("Horizontal") > 0)
         {
             //the mouse is in the last third of the screen: camera moves right
             transform.Translate(m_speed * Time.deltaTime, 0, 0);
@@ -62,13 +61,13 @@ public class CameraResolution : MonoBehaviour {
         }
 
         //Vertical move by mouse
-        if (Input.mousePosition.y < (Screen.height * 0.20))
+        if (Input.mousePosition.y < (Screen.height * 0.10) || Input.GetAxis("Vertical") < 0)
         {
             //the mouse is in the bottom third of the screen: camera moves down
             transform.Translate(0, -m_speed * Time.deltaTime, 0);
             transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y,bottomLeft.y), -4);
         }
-        else if (Input.mousePosition.y > (Screen.height * 0.80))
+        else if (Input.mousePosition.y > (Screen.height * 0.90) || Input.GetAxis("Vertical") > 0)
         {
             //the mouse is in the top third of the screen: camera moves up
             transform.Translate(0, m_speed * Time.deltaTime, 0);
