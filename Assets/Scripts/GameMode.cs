@@ -655,13 +655,11 @@ public class GameMode : MonoBehaviour {
             Vector2 startIdx = getPerfectHexPosition(p_source);
             Vector2 stopIdx = getPerfectHexPosition(p_target);
 
-			Debug.Log (startIdx + " ==> " + stopIdx);
-
-            if (stopIdx.x >= startIdx.x -1)
+            if (stopIdx.y >= startIdx.y -1 && stopIdx.y <= startIdx.y +1)
             {
-                if ((stopIdx.x < startIdx.x +1  &&  stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1) 
-                        || (stopIdx.x == startIdx.x + 1 && stopIdx.y == startIdx.y))
+                if (stopIdx.x >= (startIdx.x -1 + (stopIdx.y % 2)) && stopIdx.x <= (startIdx.x + (stopIdx.y % 2)))
                 {
+                   
                     if(p_source.GetComponent<Tile>().getUnitNumbers() > p_target.GetComponent<Tile>().getUnitNumbers())
                     {
                         //Attacker wins: his units replace 
