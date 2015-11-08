@@ -53,7 +53,7 @@ public class CameraResolution : MonoBehaviour {
             transform.Translate(-m_speed * Time.deltaTime, 0, 0);
             transform.position = new Vector3(Mathf.Max(transform.position.x, topLeft.x),transform.position.y,-4);
         }
-        else if (Input.mousePosition.x > (Screen.width * 0.90) || Input.GetAxis("Horizontal") > 0)
+        else if ((Input.mousePosition.x > (Screen.width * 0.90) && Input.mousePosition.y > (Screen.height * 0.10) ) || Input.GetAxis("Horizontal") > 0)
         {
             //the mouse is in the last third of the screen: camera moves right
             transform.Translate(m_speed * Time.deltaTime, 0, 0);
@@ -67,7 +67,7 @@ public class CameraResolution : MonoBehaviour {
             transform.Translate(0, -m_speed * Time.deltaTime, 0);
             transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y,bottomLeft.y), -4);
         }
-        else if (Input.mousePosition.y > (Screen.height * 0.90) || Input.GetAxis("Vertical") > 0)
+        else if ((Input.mousePosition.y > (Screen.height * 0.90) && Input.mousePosition.x < (Screen.width * 0.90)) || Input.GetAxis("Vertical") > 0)
         {
             //the mouse is in the top third of the screen: camera moves up
             transform.Translate(0, m_speed * Time.deltaTime, 0);
