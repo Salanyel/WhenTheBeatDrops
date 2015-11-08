@@ -13,6 +13,7 @@ public class PlayerPreferences : MonoBehaviour {
 	public static string m_unitsPerTile = "UnitsPerTile";
 	public static string m_beatsFrequency = "BeatsFrequency";
 	public static string m_beatsToWin = "BeatsToWin";
+
 	public static  void InitThePlayerPrefs()
 	{
 		PlayerPrefs.SetFloat (m_init, 1);

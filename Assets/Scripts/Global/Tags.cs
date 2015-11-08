@@ -18,6 +18,6 @@ public class Tags : MonoBehaviour {
 	public static string m_ui_playerHUD = "UI_PlayerHUD";
 	public static string m_ui_yourInfo = "UI_YourInfo";
 	public static string m_ui_opponentsInfo = "UI_OpponentsInfo";
-
+	public static string m_arrow = "Arrow";
 
 }
