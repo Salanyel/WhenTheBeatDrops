@@ -24,7 +24,6 @@ public class PlayerController : MonoBehaviour
         //If the button is pressed, we initiate the drag and drop
         if (Input.GetButtonDown("Select unit"))
         {
-            Debug.Log("getting input");
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit))
@@ -32,7 +31,7 @@ public class PlayerController : MonoBehaviour
                 if (hit.collider.tag == "Tile")
                 {
                     startingTile = hit.collider.gameObject.GetComponent<Tile>();
-                    if (true || startingTile.getUnitNumbers() > 0)
+                    if (!startingTile.isMoved() && startingTile.getUnitNumbers() > 0)
                     {
                         gameMode.displayBorders(startingTile.gameObject);
                         dragging = true;

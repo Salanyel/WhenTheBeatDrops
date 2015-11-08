@@ -630,16 +630,29 @@ public class GameMode : MonoBehaviour {
 
             if (stopIdx.x >= startIdx.x -1)
             {
-                if(stopIdx.x == startIdx.x + 1 && stopIdx.y == startIdx.y)
+                if ((stopIdx.x < startIdx.x +1  &&  stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1) 
+                        || (stopIdx.x == startIdx.x + 1 && stopIdx.y == startIdx.y))
                 {
-                    //Separate case of the right neighbor. Has to be treated here due to the indexing method.
-                    Debug.Log("Drop on a neighbor");
-                }
+                    if(p_source.GetComponent<Tile>().getUnitNumbers() > p_target.GetComponent<Tile>().getUnitNumbers())
+                    {
+                        //Attacker wins: his units replace 
+                        p_target.GetComponent<Tile>().setPlayer(p_source.GetComponent<Tile>().getPlayer());
+                        p_target.GetComponent<Tile>().setIsMoved(true);
 
-                if (stopIdx.x < startIdx.x +1  &&  stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1)
-                {
-                    // The target is a neighbor of the source
-                    Debug.Log("Drop on a neighbor");
+                        int newNumber = p_source.GetComponent<Tile>().getUnitNumbers() - p_target.GetComponent<Tile>().getUnitNumbers();
+                        p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
+
+                        p_source.GetComponent<Tile>().setUnitNumbers(0);
+                    }
+                    else
+                    {
+                        //Defensor wins: we just deduct his loss
+                        int newNumber = p_target.GetComponent<Tile>().getUnitNumbers() - p_source.GetComponent<Tile>().getUnitNumbers();
+                        p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
+
+                        p_source.GetComponent<Tile>().setUnitNumbers(0);
+
+                    }
                 }
             }
         }
