@@ -19,6 +19,9 @@ TagManager:
   - UI_YourInfo
   - UI_OpponentsInfo
   - Arrow
+  - UI_BeatsWinner
+  - UI_BeatsWinnerText
+  - UI_BeatsButton
   layers:
   - Default
   - TransparentFX

@@ -33,6 +33,7 @@ public enum GAME_STATE
 	PlayCurrentPlayer,
 	EndOfCurrentPlayer,
 	EndOfTurn,
+	DisplaySongsMenu,
 	WaitingForMusic
 };
 

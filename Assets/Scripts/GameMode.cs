@@ -37,8 +37,12 @@ public class GameMode : MonoBehaviour {
 	GameObject m_playerHUD;
 	GameObject m_endOfTurnButton;
 
-	//Player tunr
+	//Player turn
 	public float m_fadingSpeedPlayerTurn;
+
+	//Songs Menu
+	private PLAYERS m_lastWinner;
+	private GameObject[] m_songsButton;
 
 	void Start () {
 		/*if (PlayerPrefs.HasKey(PlayerPreferences.m_init))
@@ -56,6 +60,12 @@ public class GameMode : MonoBehaviour {
 		m_resultButton = GameObject.FindGameObjectWithTag(Tags.m_ui_resultButton);
 		m_playerHUD = GameObject.FindGameObjectWithTag (Tags.m_ui_playerHUD);
 		m_endOfTurnButton = GameObject.FindGameObjectWithTag (Tags.m_ui_endOfTheTurnButton);
+		m_songsButton = GameObject.FindGameObjectsWithTag (Tags.m_ui_beatsButton);
+
+		foreach(GameObject beatButton in m_songsButton)
+		{
+			beatButton.SetActive(false);
+		}
 
 		m_endOfTurnButton.SetActive (false);
 		m_playerHUD.SetActive (false);
@@ -95,6 +105,10 @@ public class GameMode : MonoBehaviour {
 
 		case GAME_STATE.EndOfTurn :
 			endOfTurn();
+			break;
+
+		case GAME_STATE.DisplaySongsMenu :
+			updateUIForSongsMenu();
 			break;
 
 		default:
@@ -342,6 +356,9 @@ public class GameMode : MonoBehaviour {
 		//Test if its time to score
 		if (m_beatsNumber % m_beatsFrequency == 0)
 		{
+
+			Debug.Log ("A beats winner must be chosen");
+
 			PLAYERS beatsWinner;
 
 			for (int i = 0; i < m_numberOfPlayers; ++i)
@@ -361,7 +378,7 @@ public class GameMode : MonoBehaviour {
 				}
 			}
 
-			//TODO : Get the player with the more control points under its control
+			//Get the player with the more control points under its control
 			beatsWinner = (PLAYERS) 0;
 			for (int i = 1; i < m_numberOfPlayers; ++i)
 			{
@@ -383,26 +400,99 @@ public class GameMode : MonoBehaviour {
 				}
 			}
 
+			Debug.Log ((PLAYERS) beatsWinner + " / " + equality);
+
 			if (equality)
 			{
-				//TODO : Play a random neutral song
+				m_lastWinner = PLAYERS.None;
 			}
-
-			//TODO : if there is no winner, the last more control point choose the next song
-
-			//Test if someOne as won
-			for (int i = 0; i < m_numberOfPlayers; ++i)
+			else
 			{
-				if (m_victoryPoint[i] >= m_beatsToWin)
-				{
-					m_winner = (PLAYERS) i;
-					//TODO Laucnh the win music
-				}
+				m_lastWinner = beatsWinner;
 			}
+
+			m_beatsNumber++;
+			setGameState(GAME_STATE.DisplaySongsMenu);
+			return;
 		}
 
 		m_beatsNumber++;
 		setGameState(GAME_STATE.PhaseBegins);
+	}
+
+	void updateUIForSongsMenu()
+	{
+		Image panel = GameObject.FindGameObjectWithTag (Tags.m_ui_4beatsWinner).GetComponent<Image> ();
+		Text text = GameObject.FindGameObjectWithTag (Tags.m_ui_4beatsWinnerText).GetComponent<Text> ();
+		float value;
+
+		//Display "the panel"
+		m_delay += Time.deltaTime;
+
+		if (m_delay < m_fadingSpeedPlayerTurn) {
+			value = (m_delay / m_fadingSpeedPlayerTurn);
+			panel.color = synthethiseFadingColor (panel.color, value);
+			text .color = synthethiseFadingColor (text.color, value);
+
+			if (m_lastWinner == PLAYERS.None) {
+				text.text = "Equality during the last round.\nThe next song will be random.";
+			} else {
+				text.text = m_lastWinner + "\nhas won the last beat.\n\nChoose the next song !"; 
+			}
+		} else if (m_delay < 2 * m_fadingSpeedPlayerTurn && m_lastWinner == PLAYERS.None) {
+			value = 1 - ((m_delay - m_fadingSpeedPlayerTurn) / m_fadingSpeedPlayerTurn);
+			Debug.Log (value);
+			panel.color = synthethiseFadingColor (panel.color, value);
+			text .color = synthethiseFadingColor (text.color, value);
+		} else if (m_delay > m_fadingSpeedPlayerTurn && m_lastWinner != PLAYERS.None) 
+		{
+			foreach (GameObject beatButton in m_songsButton) {
+				beatButton.SetActive (true);
+			}
+			
+			setGameState(GAME_STATE.WaitingForMusic);
+		}
+		else
+		{
+			m_delay = 0;
+			//TODO : Launch a random song
+			setGameState(GAME_STATE.PhaseBegins);
+		}
+	}
+
+	public void selectMySong()
+	{
+		m_victoryPoint [(int)m_lastWinner]++;
+		m_lastWinner = PLAYERS.None;
+		m_delay = 0;
+
+		//TODO launch my SONG
+		clearHUD ();
+
+		//Test if someOne as won
+		for (int i = 0; i < m_numberOfPlayers; ++i)
+		{
+			if (m_victoryPoint[i] >= m_beatsToWin)
+			{
+				m_winner = (PLAYERS) i;
+				//TODO Laucnh the win music
+			}
+		}
+
+		setGameState (GAME_STATE.PhaseBegins);
+	}
+
+	void clearHUD()
+	{
+		Image panel = GameObject.FindGameObjectWithTag (Tags.m_ui_4beatsWinner).GetComponent<Image> ();
+		Text text = GameObject.FindGameObjectWithTag (Tags.m_ui_4beatsWinnerText).GetComponent<Text> ();
+		panel.color = synthethiseFadingColor (panel.color, 0);
+		text .color = synthethiseFadingColor (text.color, 0);
+
+		foreach(GameObject beatButton in m_songsButton)
+		{
+			beatButton.SetActive(false);
+		}
 	}
 
 	void setBoard()

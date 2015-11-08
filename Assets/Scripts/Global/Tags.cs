@@ -19,7 +19,7 @@ public class Tags : MonoBehaviour {
 	public static string m_ui_yourInfo = "UI_YourInfo";
 	public static string m_ui_opponentsInfo = "UI_OpponentsInfo";
 	public static string m_arrow = "Arrow";
-	public static string m_ui_beatsWinner = "UI_BeatsWinner";
+	public static string m_ui_4beatsWinner = "UI_BeatsWinner";
 	public static string m_ui_4beatsWinnerText = "UI_BeatsWinnerText";
 	public static string m_ui_beatsButton = "UI_BeatsButton";
 

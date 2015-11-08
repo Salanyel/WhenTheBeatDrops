@@ -19,4 +19,9 @@ public class UILibrary : MonoBehaviour {
 	{
 		m_gameMode.endTheCurrentPlayerTurn ();
 	}
+
+	public void mySong()
+	{
+		m_gameMode.selectMySong ();
+	}
 }
