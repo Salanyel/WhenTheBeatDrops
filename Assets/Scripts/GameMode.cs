@@ -648,23 +648,23 @@ public class GameMode : MonoBehaviour {
 		}
 	}
 
-	public void displacement(GameObject p_source, GameObject p_target)
-	{
-        if(p_source != p_target)
+    public void displacement(GameObject p_source, GameObject p_target)
+    {
+        if (p_source != p_target)
         {
             Vector2 startIdx = getPerfectHexPosition(p_source);
             Vector2 stopIdx = getPerfectHexPosition(p_target);
 
-            if (stopIdx.y >= startIdx.y -1 && stopIdx.y <= startIdx.y +1)
+            if (stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1)
             {
-                if (stopIdx.x >= (startIdx.x -1 + (stopIdx.y % 2)) && stopIdx.x <= (startIdx.x + (stopIdx.y % 2)))
+                if (stopIdx.x >= (startIdx.x - 1 + (stopIdx.y % 2)) && stopIdx.x <= (startIdx.x + (stopIdx.y % 2)))
                 {
-                   if(p_source.GetComponent<Tile>().getPlayer() != p_target.GetComponent<Tile>().getPlayer())
-                   { 
-                      //It is an agression : we resolve it
-                        if(p_source.GetComponent<Tile>().getUnitNumbers() > p_target.GetComponent<Tile>().getUnitNumbers())
+                    if (p_source.GetComponent<Tile>().getPlayer() != p_target.GetComponent<Tile>().getPlayer())
+                    {
+                        //It is an agression : we resolve it
+                        if (p_source.GetComponent<Tile>().getUnitNumbers() > p_target.GetComponent<Tile>().getUnitNumbers())
                         {
-                           //Attacker wins: his units replace 
+                            //Attacker wins: his units replace 
                             p_target.GetComponent<Tile>().setPlayer(p_source.GetComponent<Tile>().getPlayer());
                             p_target.GetComponent<Tile>().setIsMoved(true);
 
@@ -675,7 +675,7 @@ public class GameMode : MonoBehaviour {
                         }
                         else
                         {
-                           //Defensor wins: we just deduct his loss
+                            //Defensor wins: we just deduct his loss
                             int newNumber = p_target.GetComponent<Tile>().getUnitNumbers() - p_source.GetComponent<Tile>().getUnitNumbers();
                             p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
 
@@ -686,7 +686,7 @@ public class GameMode : MonoBehaviour {
                     else
                     {
                         //It is a unit movement: we move up to 4 unit in the tile
-                        if(p_source.GetComponent<Tile>().getUnitNumbers() + p_target.GetComponent<Tile>().getUnitNumbers() <=4)
+                        if (p_source.GetComponent<Tile>().getUnitNumbers() + p_target.GetComponent<Tile>().getUnitNumbers() <= 4)
                         {
                             p_target.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() + p_target.GetComponent<Tile>().getUnitNumbers());
                             p_source.GetComponent<Tile>().setUnitNumbers(0);
@@ -697,12 +697,13 @@ public class GameMode : MonoBehaviour {
                             p_target.GetComponent<Tile>().setUnitNumbers(4);
                             p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - nbToMove);
                         }
-					p_source.GetComponent<Tile>().updateTokens();
-					p_target.GetComponent<Tile>().updateTokens();
+                        p_source.GetComponent<Tile>().updateTokens();
+                        p_target.GetComponent<Tile>().updateTokens();
+                    }
                 }
             }
         }
-	}
+    }
 
 	public PLAYERS getCurrentPlayer()
 	{
