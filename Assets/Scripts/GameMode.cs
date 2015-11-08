@@ -657,8 +657,10 @@ public class GameMode : MonoBehaviour {
 
             if (stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1)
             {
-                if (stopIdx.x >= (startIdx.x - 1 + (stopIdx.y % 2)) && stopIdx.x <= (startIdx.x + (stopIdx.y % 2)))
+                Debug.Log("Semi Neighbor");
+                if (stopIdx.x >= (startIdx.x - 1 + (startIdx.y % 2)) && stopIdx.x <= (startIdx.x + (startIdx.y % 2)))
                 {
+                    Debug.Log("Neighbor");
                     if (p_source.GetComponent<Tile>().getPlayer() != p_target.GetComponent<Tile>().getPlayer())
                     {
                         //It is an agression : we resolve it
@@ -697,9 +699,10 @@ public class GameMode : MonoBehaviour {
                             p_target.GetComponent<Tile>().setUnitNumbers(4);
                             p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - nbToMove);
                         }
-                        p_source.GetComponent<Tile>().updateTokens();
-                        p_target.GetComponent<Tile>().updateTokens();
                     }
+
+                    p_source.GetComponent<Tile>().updateTokens();
+                    p_target.GetComponent<Tile>().updateTokens();
                 }
             }
         }
