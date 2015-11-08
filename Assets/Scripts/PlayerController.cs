@@ -32,8 +32,9 @@ public class PlayerController : MonoBehaviour
                 if (hit.collider.tag == "Tile")
                 {
                     startingTile = hit.collider.gameObject.GetComponent<Tile>();
-                    if (startingTile.getUnitNumbers() > 0)
+                    if (true || startingTile.getUnitNumbers() > 0)
                     {
+                        gameMode.displayBorders(startingTile.gameObject);
                         dragging = true;
                     }
                 }
@@ -49,7 +50,10 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.collider.tag == "Tile")
                 {
+                    Debug.Log("dropping action");
                     finishTile = hit.collider.gameObject.GetComponent<Tile>();
+                    gameMode.displacement(startingTile.gameObject, finishTile.gameObject);
+
                 }
             }
 
