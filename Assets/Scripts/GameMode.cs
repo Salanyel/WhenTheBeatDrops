@@ -257,8 +257,57 @@ public class GameMode : MonoBehaviour {
 	//TODO : Update the HUD to display the correct amount of units
 	void updatePlayerHUD()
 	{
+        // Text references
+        Text lText = GameObject.FindGameObjectWithTag(Tags.m_ui_yourInfo).GetComponent<Text>();
+        Text rText = GameObject.FindGameObjectWithTag(Tags.m_ui_opponentsInfo).GetComponent<Text>();
 
-	}
+        // For each tile
+        GameObject[] hexes = GameObject.FindGameObjectsWithTag(Tags.m_tile);
+        Tile tile;
+
+        List<int> controlPoints = new List<int>();
+        List<int> units = new List<int>();
+
+        Debug.Log("NUMBER OF PLAYERS : " + m_numberOfPlayers);
+
+        for (int i = 0; i < m_numberOfPlayers; ++i)
+        {
+            controlPoints.Add(0);
+            units.Add(0);
+        }
+
+        foreach (GameObject hex in hexes)
+        {
+            tile = hex.GetComponent<Tile>();
+            // It's a cave, and its ours : increment ours
+            if (tile.getTileType() == TILE_TYPE.Cave && tile.getPlayer() == this.m_currentPlayer)
+            {
+                units[(int)tile.getPlayer()] += tile.getUnitNumbers();
+            }
+            else if (tile.getPlayer() != PLAYERS.None)
+            {
+                // If its a control point, add a point to the corresponding player
+                if (tile.getTileType() == TILE_TYPE.ControlPoint)
+                {
+                    controlPoints[(int)tile.getPlayer()] += 1;
+                }
+
+                //  If there are units on it, add to counter
+                Debug.Log("tile owned by  : " + tile.getPlayer());
+                units[(int)tile.getPlayer()] += tile.getUnitNumbers();
+            }
+        }
+
+        lText.text = "Your units number : " + units[(int)m_currentPlayer] + "\n Your control points : " + controlPoints[(int)m_currentPlayer] + "\n Your current score : " + m_victoryPoint[(int)m_currentPlayer] + " / 3";
+
+        string tempText = "";
+        
+        for (int i = 0; i < m_numberOfPlayers; ++i)
+        {
+            tempText += "Player " + (i + 1) + " : " + units[i] + " / " + controlPoints[i] + " // " + m_victoryPoint[i] + "\n";
+        }
+        rText.text = tempText;
+    }
 
 	//Function triggered by the "EndOfTurn" button
 	public void endTheCurrentPlayerTurn()
@@ -584,18 +633,32 @@ public class GameMode : MonoBehaviour {
 
             if (stopIdx.x >= startIdx.x -1)
             {
-                if(stopIdx.x == startIdx.x + 1 && stopIdx.y == startIdx.y)
+                if ((stopIdx.x < startIdx.x +1  &&  stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1) 
+                        || (stopIdx.x == startIdx.x + 1 && stopIdx.y == startIdx.y))
                 {
-                    //Separate case of the right neighbor. Has to be treated here due to the indexing method.
-                    Debug.Log("Drop on a neighbor");
-                }
+                    if(p_source.GetComponent<Tile>().getUnitNumbers() > p_target.GetComponent<Tile>().getUnitNumbers())
+                    {
+                        //Attacker wins: his units replace 
+                        p_target.GetComponent<Tile>().setPlayer(p_source.GetComponent<Tile>().getPlayer());
+                        p_target.GetComponent<Tile>().setIsMoved(true);
 
-                if (stopIdx.x < startIdx.x +1  &&  stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1)
-                {
-                    // The target is a neighbor of the source
-                    Debug.Log("Drop on a neighbor");
+                        int newNumber = p_source.GetComponent<Tile>().getUnitNumbers() - p_target.GetComponent<Tile>().getUnitNumbers();
+                        p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
+
+                        p_source.GetComponent<Tile>().setUnitNumbers(0);
+                    }
+                    else
+                    {
+                        //Defensor wins: we just deduct his loss
+                        int newNumber = p_target.GetComponent<Tile>().getUnitNumbers() - p_source.GetComponent<Tile>().getUnitNumbers();
+                        p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
+
+                        p_source.GetComponent<Tile>().setUnitNumbers(0);
+
+                    }
                 }
             }
         }
 	}
 }
+
