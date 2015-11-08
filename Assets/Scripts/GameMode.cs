@@ -3,9 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
+
 public class GameMode : MonoBehaviour {
 
-	public GameObject m_tilePrefab;
+    // CONSTANTS
+    public const int MAX_NUMBER_OF_PLAYERS = 2;
+    public const int MAX_NUMBER_OF_NEUTRAL_BEATS = 1;
+
+    public GameObject m_tilePrefab;
 
 	private float m_mapWidth;
 	private float m_mapHeight;
@@ -44,7 +49,17 @@ public class GameMode : MonoBehaviour {
 	private PLAYERS m_lastWinner;
 	private GameObject[] m_songsButton;
 
-	void Start () {
+    // Song Management
+    // if isPlayerBeat == true, we're playing the currently selected playerBeat. Else, playing the neutral beat
+    bool m_song_isPlayerBeat;
+    PLAYERS m_song_playerBeat;
+    NEUTRAL_BEATS m_song_neutralBeat;
+    MusicManager m_musicManager;
+
+
+    void Start () {
+        m_musicManager = GameObject.FindGameObjectWithTag(Tags.m_musicManager).GetComponent<MusicManager>();
+
 		/*if (PlayerPrefs.HasKey(PlayerPreferences.m_init))
 		{
 			PlayerPreferences.InitThePlayerPrefs();
@@ -314,7 +329,7 @@ public class GameMode : MonoBehaviour {
             }
         }
 
-        lText.text = "Your units number : " + units[(int)m_currentPlayer] + "\n Your control points : " + controlPoints[(int)m_currentPlayer] + "\n Your current score : " + m_victoryPoint[(int)m_currentPlayer] + " / 3";
+        lText.text = m_currentPlayer + "\nYour units number : " + units[(int)m_currentPlayer] + "\n Your control points : " + controlPoints[(int)m_currentPlayer] + "\n Your current score : " + m_victoryPoint[(int)m_currentPlayer] + " / 3";
 
 		string tempText = "Player : Units / Control // Current score\n";
         
@@ -455,7 +470,13 @@ public class GameMode : MonoBehaviour {
 		else
 		{
 			m_delay = 0;
-			//TODO : Launch a random song
+            
+            // Launching a random song
+            m_song_isPlayerBeat = false;
+            m_song_neutralBeat = (NEUTRAL_BEATS) Random.Range(0, MAX_NUMBER_OF_NEUTRAL_BEATS);
+
+            m_musicManager.startTurnBeat(m_song_neutralBeat);
+
 			setGameState(GAME_STATE.PhaseBegins);
 		}
 	}
@@ -463,13 +484,12 @@ public class GameMode : MonoBehaviour {
 	public void selectMySong()
 	{
 		m_victoryPoint [(int)m_lastWinner]++;
-		m_lastWinner = PLAYERS.None;
-		m_delay = 0;
 
-		//TODO launch my SONG
+        m_musicManager.startTurnPlayer(m_lastWinner, m_victoryPoint[(int)m_lastWinner]);
+
 		clearHUD ();
 
-		//Test if someOne as won
+		//Test if someone as won
 		for (int i = 0; i < m_numberOfPlayers; ++i)
 		{
 			if (m_victoryPoint[i] >= m_beatsToWin)
@@ -480,7 +500,10 @@ public class GameMode : MonoBehaviour {
 		}
 
 		setGameState (GAME_STATE.PhaseBegins);
-	}
+
+        m_lastWinner = PLAYERS.None;
+        m_delay = 0;
+    }
 
 	void clearHUD()
 	{
@@ -672,7 +695,7 @@ public class GameMode : MonoBehaviour {
 		m_gameState = p_state;
 	}
 
-	Vector2 getPerfectHexPosition(GameObject p_target)
+	public Vector2 getPerfectHexPosition(GameObject p_target)
 	{
 		
 		float x;
@@ -738,7 +761,7 @@ public class GameMode : MonoBehaviour {
 		}
 	}
 
-    public void displacement(GameObject p_source, GameObject p_target)
+	public void displacement(GameObject p_source, GameObject p_target, int p_unitsNumber)
     {
         if (p_source != p_target)
         {
@@ -762,33 +785,33 @@ public class GameMode : MonoBehaviour {
                             p_target.GetComponent<Tile>().setPlayer(p_source.GetComponent<Tile>().getPlayer());
                             p_target.GetComponent<Tile>().setIsMoved(true);
 
-                            int newNumber = p_source.GetComponent<Tile>().getUnitNumbers() - p_target.GetComponent<Tile>().getUnitNumbers();
+							int newNumber = p_unitsNumber - p_target.GetComponent<Tile>().getUnitNumbers();
                             p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
 
-                            p_source.GetComponent<Tile>().setUnitNumbers(0);
+                            p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
                         }
                         else
                         {
                             //Defensor wins: we just deduct his loss
-                            int newNumber = p_target.GetComponent<Tile>().getUnitNumbers() - p_source.GetComponent<Tile>().getUnitNumbers();
+							int newNumber = p_target.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber;
                             p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
 
-                            p_source.GetComponent<Tile>().setUnitNumbers(0);
+							p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
 
                         }
                     }
-                    else
+                    else 
                     {
                         //It is a unit movement: we move up to 4 unit in the tile
-                        if (p_source.GetComponent<Tile>().getUnitNumbers() + p_target.GetComponent<Tile>().getUnitNumbers() <= 4)
+                        if (p_unitsNumber + p_target.GetComponent<Tile>().getUnitNumbers() <= m_unitsPerTile)
                         {
-                            p_target.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() + p_target.GetComponent<Tile>().getUnitNumbers());
-                            p_source.GetComponent<Tile>().setUnitNumbers(0);
+                            p_target.GetComponent<Tile>().setUnitNumbers(p_target.GetComponent<Tile>().getUnitNumbers() + p_unitsNumber);
+							p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
                         }
                         else
                         {
-                            int nbToMove = 4 - p_target.GetComponent<Tile>().getUnitNumbers();
-                            p_target.GetComponent<Tile>().setUnitNumbers(4);
+							int nbToMove = m_unitsPerTile - p_target.GetComponent<Tile>().getUnitNumbers();
+                            p_target.GetComponent<Tile>().setUnitNumbers(m_unitsPerTile);
                             p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - nbToMove);
                         }
                     }

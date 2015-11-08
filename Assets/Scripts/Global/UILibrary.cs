@@ -24,4 +24,19 @@ public class UILibrary : MonoBehaviour {
 	{
 		m_gameMode.selectMySong ();
 	}
+
+	public void loadTutorial()
+	{
+		Application.LoadLevel (1);
+	}
+
+	public void loadANewGame()
+	{
+		Application.LoadLevel (2);
+	}
+
+	public void quitTheApplication()
+	{
+		Application.Quit ();
+	}
 }
