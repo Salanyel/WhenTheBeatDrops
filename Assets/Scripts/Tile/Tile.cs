@@ -11,7 +11,9 @@ public class Tile : MonoBehaviour {
 	private PLAYERS m_player;
 	[SerializeField]
 	private TILE_TYPE m_tileType;
+	[SerializeField]
 	private int m_unitNumbers;
+	[SerializeField]
 	private bool m_isMoved;
 
 	// Use this for initialization

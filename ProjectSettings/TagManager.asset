@@ -15,6 +15,9 @@ TagManager:
   - UI_endOfTheTurnButton
   - UI_Player
   - UI_PlayerText
+  - UI_PlayerHUD
+  - UI_YourInfo
+  - UI_OpponentsInfo
   layers:
   - Default
   - TransparentFX
