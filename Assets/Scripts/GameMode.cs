@@ -95,7 +95,7 @@ public class GameMode : MonoBehaviour {
 		{
 		case GAME_STATE.InitTheMap :
 			InitTheMap();
-			InitTheMapFor2Players();
+			InitTheMapFor2Players_default();
 			break;
 
 		case GAME_STATE.PhaseBegins :
@@ -569,11 +569,10 @@ public class GameMode : MonoBehaviour {
 
 	void InitTheMap()
 	{
-
 		switch(m_numberOfPlayers)
 		{
 		case 2 :
-			InitTheMapFor2Players();
+			InitTheMapFor2Players_default();
 			break;
 
 		default:
@@ -584,6 +583,113 @@ public class GameMode : MonoBehaviour {
 		m_beatsNumber = 1;
 		setGameState (GAME_STATE.PhaseBegins);
 	}
+
+
+    void InitTheMapFor2Players_default()
+    {
+        Vector2 p1 = new Vector2(3, 2);
+        Vector2 p2 = new Vector2(7, 6);
+        List<Vector2> controlPoints = new List<Vector2>();
+        List<Vector2> villages = new List<Vector2>();
+        List<Vector2> reprod = new List<Vector2>();
+        List<Vector2> Caves = new List<Vector2>();
+        GameObject[] hexes = GameObject.FindGameObjectsWithTag(Tags.m_tile);
+        Tile tile;
+
+        //Add ControlPoints
+        controlPoints.Add(new Vector2(4, 0));
+        controlPoints.Add(new Vector2(6, 4));
+        controlPoints.Add(new Vector2(3, 5));
+        controlPoints.Add(new Vector2(5, 9));
+
+        //Add Village
+        villages.Add(new Vector2(1, 5));
+        villages.Add(new Vector2(4, 4));
+        villages.Add(new Vector2(5, 5));
+        villages.Add(new Vector2(8, 4));
+
+        //Add Reprod
+        reprod.Add(new Vector2(7, 2));
+        reprod.Add(new Vector2(2, 7));
+
+        //Add Caves
+        Caves.Add(new Vector2(0, 0));
+        Caves.Add(new Vector2(1, 0));
+        Caves.Add(new Vector2(0, 1));
+        Caves.Add(new Vector2(4, 1));
+        Caves.Add(new Vector2(5, 1));
+        Caves.Add(new Vector2(6, 1));
+        Caves.Add(new Vector2(7, 1));
+        Caves.Add(new Vector2(4, 2));
+        Caves.Add(new Vector2(5, 2));
+        Caves.Add(new Vector2(6, 2));
+        Caves.Add(new Vector2(8, 2));
+        Caves.Add(new Vector2(5, 3));
+        Caves.Add(new Vector2(6, 3));
+        Caves.Add(new Vector2(8, 3));
+
+        Caves.Add(new Vector2(9, 9));
+        Caves.Add(new Vector2(8, 9));
+        Caves.Add(new Vector2(9, 8));
+        Caves.Add(new Vector2(5, 8));
+        Caves.Add(new Vector2(4, 8));
+        Caves.Add(new Vector2(3, 8));
+        Caves.Add(new Vector2(2, 8));
+        Caves.Add(new Vector2(1, 7));
+        Caves.Add(new Vector2(3, 7));
+        Caves.Add(new Vector2(4, 7));
+        Caves.Add(new Vector2(5, 7));
+        Caves.Add(new Vector2(1, 6));
+        Caves.Add(new Vector2(3, 6));
+        Caves.Add(new Vector2(4, 6));
+
+        foreach (GameObject hex in hexes)
+        {
+            if (getPerfectHexPosition(hex) == p1)
+            {
+                hex.name = "Player1Spawn";
+                tile = hex.GetComponent<Tile>();
+                tile.setPlayer(PLAYERS.Baroque);
+                tile.setTileType(TILE_TYPE.Production);
+            }
+
+            if (getPerfectHexPosition(hex) == p2)
+            {
+                hex.name = "Player2Spawn";
+                tile = hex.GetComponent<Tile>();
+                tile.setPlayer(PLAYERS.Retroish);
+                tile.setTileType(TILE_TYPE.Production);
+            }
+
+            if (controlPoints.Contains(getPerfectHexPosition(hex)))
+            {
+                hex.name = "ControlPoints";
+                tile = hex.GetComponent<Tile>();
+                tile.setTileType(TILE_TYPE.ControlPoint);
+            }
+
+            if (reprod.Contains(getPerfectHexPosition(hex)))
+            {
+                hex.name = "Production";
+                tile = hex.GetComponent<Tile>();
+                tile.setTileType(TILE_TYPE.Production);
+            }
+
+            if (villages.Contains(getPerfectHexPosition(hex)))
+            {
+                hex.name = "Village";
+                tile = hex.GetComponent<Tile>();
+                tile.setTileType(TILE_TYPE.Village);
+            }
+
+            if (Caves.Contains(getPerfectHexPosition(hex)))
+            {
+                hex.name = "Caves";
+                tile = hex.GetComponent<Tile>();
+                tile.setTileType(TILE_TYPE.Cave);
+            }
+        }
+    }
 
 	void InitTheMapFor2Players()
 	{
