@@ -748,8 +748,10 @@ public class GameMode : MonoBehaviour {
             if (stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1)
             {
                 Debug.Log("Semi Neighbor");
-                if (stopIdx.x >= (startIdx.x - 1 + (startIdx.y % 2)) && stopIdx.x <= (startIdx.x + (startIdx.y % 2)))
+                if(stopIdx.y == startIdx.y && stopIdx.x >= (startIdx.x - 1) && stopIdx.x <= (startIdx.x + 1)
+                    || stopIdx.x >= (startIdx.x - 1 + (startIdx.y % 2)) && stopIdx.x <= (startIdx.x + (startIdx.y % 2)))
                 {
+                   
                     Debug.Log("Neighbor");
                     if (p_source.GetComponent<Tile>().getPlayer() != p_target.GetComponent<Tile>().getPlayer())
                     {
