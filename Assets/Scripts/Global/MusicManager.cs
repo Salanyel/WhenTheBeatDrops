@@ -23,7 +23,7 @@ public class MusicManager : MonoBehaviour
     public List<AudioClip> m_beatRetroish;
 
     List<List<AudioClip>> m_playerBeats;
-    List<AudioClip> m_victories;
+    public List<AudioClip> m_victories;
 
     // Managing the current audio playing
     bool m_outro = false;
