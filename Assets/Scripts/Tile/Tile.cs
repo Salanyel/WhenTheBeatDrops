@@ -137,6 +137,7 @@ public class Tile : MonoBehaviour {
 				Destroy(m_token);
 			}
 
+			Debug.Log (m_gameMode.getPerfectHexPosition(gameObject) + " // " + m_unitNumbers);
 			token = m_tokens[m_unitNumbers];
 			m_token = (GameObject) Instantiate(token, token.transform.position, token.transform.rotation);
 			m_token.transform.parent = gameObject.transform;

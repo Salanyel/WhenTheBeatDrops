@@ -314,7 +314,7 @@ public class GameMode : MonoBehaviour {
             }
         }
 
-        lText.text = "Your units number : " + units[(int)m_currentPlayer] + "\n Your control points : " + controlPoints[(int)m_currentPlayer] + "\n Your current score : " + m_victoryPoint[(int)m_currentPlayer] + " / 3";
+        lText.text = m_currentPlayer + "\nYour units number : " + units[(int)m_currentPlayer] + "\n Your control points : " + controlPoints[(int)m_currentPlayer] + "\n Your current score : " + m_victoryPoint[(int)m_currentPlayer] + " / 3";
 
 		string tempText = "Player : Units / Control // Current score\n";
         
@@ -672,7 +672,7 @@ public class GameMode : MonoBehaviour {
 		m_gameState = p_state;
 	}
 
-	Vector2 getPerfectHexPosition(GameObject p_target)
+	public Vector2 getPerfectHexPosition(GameObject p_target)
 	{
 		
 		float x;
@@ -738,7 +738,7 @@ public class GameMode : MonoBehaviour {
 		}
 	}
 
-    public void displacement(GameObject p_source, GameObject p_target)
+	public void displacement(GameObject p_source, GameObject p_target, int p_unitsNumber)
     {
         if (p_source != p_target)
         {
@@ -760,33 +760,33 @@ public class GameMode : MonoBehaviour {
                             p_target.GetComponent<Tile>().setPlayer(p_source.GetComponent<Tile>().getPlayer());
                             p_target.GetComponent<Tile>().setIsMoved(true);
 
-                            int newNumber = p_source.GetComponent<Tile>().getUnitNumbers() - p_target.GetComponent<Tile>().getUnitNumbers();
+							int newNumber = p_unitsNumber - p_target.GetComponent<Tile>().getUnitNumbers();
                             p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
 
-                            p_source.GetComponent<Tile>().setUnitNumbers(0);
+                            p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
                         }
                         else
                         {
                             //Defensor wins: we just deduct his loss
-                            int newNumber = p_target.GetComponent<Tile>().getUnitNumbers() - p_source.GetComponent<Tile>().getUnitNumbers();
+							int newNumber = p_target.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber;
                             p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
 
-                            p_source.GetComponent<Tile>().setUnitNumbers(0);
+							p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
 
                         }
                     }
-                    else
+                    else 
                     {
                         //It is a unit movement: we move up to 4 unit in the tile
-                        if (p_source.GetComponent<Tile>().getUnitNumbers() + p_target.GetComponent<Tile>().getUnitNumbers() <= 4)
+                        if (p_unitsNumber + p_target.GetComponent<Tile>().getUnitNumbers() <= m_unitsPerTile)
                         {
-                            p_target.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() + p_target.GetComponent<Tile>().getUnitNumbers());
-                            p_source.GetComponent<Tile>().setUnitNumbers(0);
+                            p_target.GetComponent<Tile>().setUnitNumbers(p_target.GetComponent<Tile>().getUnitNumbers() + p_unitsNumber);
+							p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
                         }
                         else
                         {
-                            int nbToMove = 4 - p_target.GetComponent<Tile>().getUnitNumbers();
-                            p_target.GetComponent<Tile>().setUnitNumbers(4);
+							int nbToMove = m_unitsPerTile - p_target.GetComponent<Tile>().getUnitNumbers();
+                            p_target.GetComponent<Tile>().setUnitNumbers(m_unitsPerTile);
                             p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - nbToMove);
                         }
                     }
