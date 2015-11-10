@@ -23,6 +23,8 @@ public class GameMode : MonoBehaviour {
 	private int m_beatsFrequency;
 	private int m_beatsToWin;
 	private int m_foodsPerVillage;
+	private int m_notesProductionReduction;
+
 	//Victory conditions
 	private int m_beatsNumber;
 
@@ -267,6 +269,12 @@ public class GameMode : MonoBehaviour {
 			int nextValue;
 			int currentFoodPopulation = getFoodForPlayer(m_currentPlayer);
 			int spawningQuantity;
+			int unitsSpawnNumber = m_unitsSpawnNumber;
+
+			if (m_song_isPlayerBeat && m_currentPlayer == m_song_playerBeat)
+			{
+				unitsSpawnNumber -= m_notesProductionReduction;
+			}
 
 			foreach(GameObject hex in hexes)
 			{
@@ -276,13 +284,13 @@ public class GameMode : MonoBehaviour {
 					break;
 				}
 
-				if (m_unitsSpawnNumber + currentFoodPopulation > m_foodLimit[(int) m_currentPlayer])
+				if (unitsSpawnNumber + currentFoodPopulation > m_foodLimit[(int) m_currentPlayer])
 				{
 					spawningQuantity = m_foodLimit[(int) m_currentPlayer] - currentFoodPopulation;
 				}
 				else
 				{
-					spawningQuantity = m_unitsSpawnNumber;
+					spawningQuantity = unitsSpawnNumber;
 				}
 
 				tile = hex.GetComponent<Tile>();
@@ -317,7 +325,7 @@ public class GameMode : MonoBehaviour {
 		}
 	}
 
-	//Update the HUD to display the correct amount of units
+	//Update the HUD to display the correct amount of units, control points and food limits
 	void updatePlayerHUD()
 	{
 		//Display the HUD
@@ -513,6 +521,7 @@ public class GameMode : MonoBehaviour {
 	void launchARandomNeutralSong()
 	{
 		m_song_isPlayerBeat = false;
+		m_song_playerBeat = PLAYERS.None;
 		m_song_neutralBeat = (NEUTRAL_BEATS) Random.Range(0, MAX_NUMBER_OF_NEUTRAL_BEATS);
 		
 		m_musicManager.startPeriodBeat(m_song_neutralBeat);
@@ -522,6 +531,8 @@ public class GameMode : MonoBehaviour {
 	{
 		m_victoryPoint [(int)m_lastWinner]++;
 
+		m_song_isPlayerBeat = true;
+		m_song_playerBeat = m_lastWinner;
         m_musicManager.startPeriodPlayer(m_lastWinner, m_victoryPoint[(int)m_lastWinner]);
 
 		clearHUD ();
@@ -565,6 +576,7 @@ public class GameMode : MonoBehaviour {
 		m_beatsFrequency = PlayerPrefs.GetInt(PlayerPreferences.m_beatsFrequency);
 		m_beatsToWin = PlayerPrefs.GetInt(PlayerPreferences.m_beatsToWin);
 		m_foodsPerVillage = PlayerPrefs.GetInt(PlayerPreferences.m_foodsPerVillage);
+		m_notesProductionReduction = PlayerPrefs.GetInt(PlayerPreferences.m_notesProductionReduction);
 
 		createTheMap ();
 	}
@@ -678,15 +690,16 @@ public class GameMode : MonoBehaviour {
         Caves.Add(new Vector2(4, 6));
 
 		//to test the travel around the world;
+
 		//TODO : remove these lines
-		Vector2 zero = new Vector2(0, 0);
+		/*Vector2 zero = new Vector2(0, 0);
 		Vector2 extemity = new Vector2(9, 9);
 		p1 = zero;
 		p2 = extemity;
 		reprod.Add(zero);
 		Caves.Remove(zero);
 		reprod.Add(extemity);
-		Caves.Remove(extemity);
+		Caves.Remove(extemity);//*/
 
         foreach (GameObject hex in hexes)
         {

@@ -121,6 +121,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 115c203691f1a0348adda3c8a694522e, type: 3}
   m_beatRetroish:
   - {fileID: 8300000, guid: 2f07c2afd9fa22f40808d8ee5d10ec32, type: 3}
+  m_victories:
+  - {fileID: 8300000, guid: 115c203691f1a0348adda3c8a694522e, type: 3}
+  - {fileID: 8300000, guid: 2f07c2afd9fa22f40808d8ee5d10ec32, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -14,6 +14,7 @@ public class PlayerPreferences : MonoBehaviour {
 	public static string m_beatsFrequency = "BeatsFrequency";
 	public static string m_beatsToWin = "BeatsToWin";
 	public static string m_foodsPerVillage = "FoodsPerVillage";
+	public static string m_notesProductionReduction = "NotesProductionReduction";
 
 	public static  void InitThePlayerPrefs()
 	{
@@ -28,5 +29,6 @@ public class PlayerPreferences : MonoBehaviour {
 		PlayerPrefs.SetInt (m_beatsFrequency, 4);
 		PlayerPrefs.SetInt (m_beatsToWin, 3);
 		PlayerPrefs.SetInt (m_foodsPerVillage, 4);
+		PlayerPrefs.SetInt (m_notesProductionReduction, 1);
 	}
 }
