@@ -13,6 +13,7 @@ public class PlayerPreferences : MonoBehaviour {
 	public static string m_unitsPerTile = "UnitsPerTile";
 	public static string m_beatsFrequency = "BeatsFrequency";
 	public static string m_beatsToWin = "BeatsToWin";
+	public static string m_foodsPerVillage = "FoodsPerVillage";
 
 	public static  void InitThePlayerPrefs()
 	{
@@ -21,10 +22,11 @@ public class PlayerPreferences : MonoBehaviour {
 		PlayerPrefs.SetFloat (m_mapWidth, 10);
 		PlayerPrefs.SetFloat (m_mapHeight, 10);
 		PlayerPrefs.SetInt (m_numberOfPlayers, 2);
-		PlayerPrefs.SetInt (m_populationLimit, 15);
+		PlayerPrefs.SetInt (m_populationLimit, 10);
 		PlayerPrefs.SetInt (m_unitsSpawn, 2);
 		PlayerPrefs.SetInt (m_unitsPerTile, 4);
 		PlayerPrefs.SetInt (m_beatsFrequency, 4);
 		PlayerPrefs.SetInt (m_beatsToWin, 3);
+		PlayerPrefs.SetInt (m_foodsPerVillage, 4);
 	}
 }

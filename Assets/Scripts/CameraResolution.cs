@@ -29,10 +29,6 @@ public class CameraResolution : MonoBehaviour
         m_camera = GameObject.FindGameObjectWithTag(Tags.m_mainCamera).GetComponent<Camera>();
         m_baseRatio = calculateRatio(m_baseWidth, m_baseHeight);
 
-        float mapWidth = PlayerPrefs.GetFloat(PlayerPreferences.m_mapWidth);
-        float mapHeight = PlayerPrefs.GetFloat(PlayerPreferences.m_mapHeight);
-        float tilesUnit = PlayerPrefs.GetFloat(PlayerPreferences.m_tilesUnit);
-
         topLeft = new Vector2(2.5f, -3.5f);
         topRight = new Vector2(6.5f, -3.5f);
         bottomLeft = new Vector2(2.5f, -8);

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 /*
  LE GROS TODO DU BONHEUR POUR PROKO : 
   - Commencer par appeler playJinglePlayer() ou playJingleNeutral() : joue le jingle du player (ou de la musique neutre correspondante)
-  - Ensuite, appeller startTurnPlayer() ou startTurnNeutral quand le tour commence : joue la musique correspondante
-  - Enfin, appeller endTurn a la fin du tour : le fade out
+  - Ensuite, appeller startPeriodPlayer() ou startPeriodNeutral quand le tour commence : joue la musique correspondante
+  - Enfin, appeller endPeriod a la fin du tour : le fade out
     */
 
 public class MusicManager : MonoBehaviour
@@ -71,18 +71,20 @@ public class MusicManager : MonoBehaviour
 
 
     // Call that at the end of a turn
-    public void endTurn()
+    public void endPeriod()
     {
         this.m_outro = true;
     }
 
-    public void startTurnPlayer(PLAYERS newBeat, int playerScore)
+    public void startPeriodPlayer(PLAYERS newBeat, int playerScore)
     {
-        this.playJinglePlayer();
+		currentPlayer = newBeat;        
+		Debug.Log ("MM, new beat leader : " + currentPlayer);
+		this.playJinglePlayer();
         this.Invoke("playTurnPlayer", TIME_JINGLE);
     }
 
-    public void startTurnBeat(NEUTRAL_BEATS newBeat)
+    public void startPeriodBeat(NEUTRAL_BEATS newBeat)
     {
         this.playJingleNeutral();
         this.Invoke("playTurnNeutral", TIME_JINGLE);
@@ -106,6 +108,7 @@ public class MusicManager : MonoBehaviour
     // Call when the turn start, to start the music of the player
     void playTurnPlayer()
     {
+		Debug.Log ("Music played : " + currentPlayer);
         this.reset();
         m_source.loop = true;
         m_source.clip = m_playerBeats[(int)currentPlayer][playerScore];

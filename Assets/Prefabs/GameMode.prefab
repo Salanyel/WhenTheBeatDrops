@@ -53,8 +53,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_tilePrefab: {fileID: 164018, guid: c325faacedc01314898ca604ca0e2adf, type: 2}
   m_fadingSpeed: 5
-  m_fadingSpeedTurn: 0
-  m_fadingSpeedPlayerTurn: 0
+  m_fadingSpeedTurn: 1
+  m_fadingSpeedPlayerTurn: 1
+  m_fadingSpeedSongsMenu: 1.5
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

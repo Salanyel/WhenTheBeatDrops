@@ -40,10 +40,8 @@ public enum GAME_STATE
 
 public enum DIRECTIONS
 {
-	EAST, 
-	WEST,
-	NORTHEAST,
-	NORTHWEST,
-	SOUTHEAST,
-	SOUTHWEST
+	East, 
+	West,
+	North,
+	South
 };

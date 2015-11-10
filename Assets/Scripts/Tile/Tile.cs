@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Tile : MonoBehaviour {
 
 	public Material[] m_colors;
 	public GameObject m_base;
 	public Material m_neutral;
+	public GameObject[] m_arrows;
 
 	public GameObject[] m_environments;
 	public Vector3[] m_environmentPosition;
@@ -25,7 +27,7 @@ public class Tile : MonoBehaviour {
 	private Vector3 m_pointFroEnvironment;
 	[SerializeField]
 	private GameObject m_token;
-	private GameMode m_gameMode;
+	private GameMode m_gameMode;		
 
 	// Use this for initialization
 	void Start () {
@@ -36,6 +38,11 @@ public class Tile : MonoBehaviour {
 		m_environment = null;
 		m_token = null;
 		m_gameMode = GameObject.FindGameObjectWithTag (Tags.m_gameMode).GetComponent<GameMode> ();
+
+		for (int i = 0 ; i < m_arrows.Length; ++i)
+		{
+			m_arrows[i].SetActive(false);
+		}
 	}
 
 	void Update()
@@ -93,6 +100,15 @@ public class Tile : MonoBehaviour {
 	//Setter
 	public void setPlayer(PLAYERS p_player)
 	{
+		if (m_tileType == TILE_TYPE.Village)
+		{
+			if (m_player != PLAYERS.None)
+			{
+				m_gameMode.setFoodLimit(m_player, -m_gameMode.getFoodPerVillage());
+			}
+			m_gameMode.setFoodLimit(p_player, +m_gameMode.getFoodPerVillage());
+		}
+
 		m_player = p_player;
 		setMaterial ();
 
@@ -137,7 +153,6 @@ public class Tile : MonoBehaviour {
 				Destroy(m_token);
 			}
 
-			Debug.Log (m_gameMode.getPerfectHexPosition(gameObject) + " // " + m_unitNumbers);
 			token = m_tokens[m_unitNumbers];
 			m_token = (GameObject) Instantiate(token, token.transform.position, token.transform.rotation);
 			m_token.transform.parent = gameObject.transform;
@@ -150,6 +165,25 @@ public class Tile : MonoBehaviour {
 				Destroy(m_token);
 				m_token = null;
 			}
+		}
+	}
+
+	public void displayArrow(List<string> p_directions)
+	{
+		for (int i = 0; i < m_arrows.Length; ++i)
+		{
+			if (p_directions.Contains(m_arrows[i].name))
+			{
+				m_arrows[i].SetActive(true);
+			}
+		}
+	}
+
+	public void hideArrows()
+	{
+		for (int i = 0; i  < m_arrows.Length; ++i)
+		{
+			m_arrows[i].SetActive(false);
 		}
 	}
 }

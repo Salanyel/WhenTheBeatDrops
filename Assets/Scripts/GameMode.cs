@@ -10,24 +10,30 @@ public class GameMode : MonoBehaviour {
     public const int MAX_NUMBER_OF_PLAYERS = 2;
     public const int MAX_NUMBER_OF_NEUTRAL_BEATS = 1;
 
+	//GameMode configuration
     public GameObject m_tilePrefab;
+	private GAME_STATE m_gameState;
 
+	//Map creation
 	private float m_mapWidth;
 	private float m_mapHeight;
 	private float m_tilesUnit;
-	
-	private int m_beatsNumber;
-	private PLAYERS[] m_players;
-	private GAME_STATE m_gameState;
-	private int m_populationLimit;
-	private int m_numberOfPlayers;
-	private PLAYERS m_currentPlayer;
-	private int m_currentPlayerIndex;
 	private int m_unitsSpawnNumber;
 	private int m_unitsPerTile;
 	private int m_beatsFrequency;
 	private int m_beatsToWin;
+	private int m_foodsPerVillage;
+	//Victory conditions
+	private int m_beatsNumber;
+
+	//Players configuration
+	private int m_numberOfPlayers;
+	private PLAYERS[] m_players;
+	private int m_populationLimit;
+	private PLAYERS m_currentPlayer;
+	private int m_currentPlayerIndex;
 	private int[] m_victoryPoint;
+	private int[] m_foodLimit;
 
 	//Result screen
 	private PLAYERS m_winner;
@@ -46,6 +52,7 @@ public class GameMode : MonoBehaviour {
 	public float m_fadingSpeedPlayerTurn;
 
 	//Songs Menu
+	public float m_fadingSpeedSongsMenu;
 	private PLAYERS m_lastWinner;
 	private GameObject[] m_songsButton;
 
@@ -60,10 +67,11 @@ public class GameMode : MonoBehaviour {
     void Start () {
         m_musicManager = GameObject.FindGameObjectWithTag(Tags.m_musicManager).GetComponent<MusicManager>();
 
-		/*if (PlayerPrefs.HasKey(PlayerPreferences.m_init))
+		if (PlayerPrefs.HasKey(PlayerPreferences.m_init))
 		{
 			PlayerPreferences.InitThePlayerPrefs();
-		}*/
+		}
+		//TODO : delete this line of init
 		PlayerPreferences.InitThePlayerPrefs();
 
 		setBoard ();
@@ -93,28 +101,35 @@ public class GameMode : MonoBehaviour {
 
 		switch (m_gameState)
 		{
+
 		case GAME_STATE.InitTheMap :
+			//Create the map and its contents
 			InitTheMap();
 			InitTheMapFor2Players_default();
-			break;
+			break;				
 
 		case GAME_STATE.PhaseBegins :
+			//Test if somebody has won the game. If not, continue the game
 			phaseBegins();
 			break;
 
 		case GAME_STATE.DisplayCurrentTurn :
+			//Display the "Game turn X" screen
 			displayCurrentTurn();
 			break;
 
 		case GAME_STATE.InitCurrentTurn :
+			//Sort the plyers tab to change the first player each turn
 			initCurrentTurn();
 			break;
 
 		case GAME_STATE.PlayCurrentPlayer :
+			//Display the "Turn of player X" screen & create new units
 			playCurrentTurn();
 			break;
 
 		case GAME_STATE.EndOfCurrentPlayer :
+			//
 			updatePlayerHUD();
 			break;
 
@@ -197,7 +212,7 @@ public class GameMode : MonoBehaviour {
 	//Sort the m_players Tab
 	void initCurrentTurn()
 	{
-		m_gameState = GAME_STATE.PlayCurrentPlayer;
+		setGameState(GAME_STATE.PlayCurrentPlayer);
 		m_currentPlayerIndex = 0;
 
 		if (m_numberOfPlayers < 3)
@@ -250,9 +265,26 @@ public class GameMode : MonoBehaviour {
 			Tile tile;
 			int currentUnitNumbers;
 			int nextValue;
+			int currentFoodPopulation = getFoodForPlayer(m_currentPlayer);
+			int spawningQuantity;
 
 			foreach(GameObject hex in hexes)
 			{
+				//break the foreach if the population limit has been reached
+				if (currentFoodPopulation >= m_foodLimit[(int) m_currentPlayer])
+				{
+					break;
+				}
+
+				if (m_unitsSpawnNumber + currentFoodPopulation > m_foodLimit[(int) m_currentPlayer])
+				{
+					spawningQuantity = m_foodLimit[(int) m_currentPlayer] - currentFoodPopulation;
+				}
+				else
+				{
+					spawningQuantity = m_unitsSpawnNumber;
+				}
+
 				tile = hex.GetComponent<Tile>();
 
 				//Reset the possibility to move the units
@@ -262,14 +294,15 @@ public class GameMode : MonoBehaviour {
 				{
 					if (tile.getTileType() == TILE_TYPE.Production)
 					{
+
 						currentUnitNumbers = tile.getUnitNumbers();
-						if (currentUnitNumbers + m_unitsSpawnNumber > m_unitsPerTile)
+						if (currentUnitNumbers + spawningQuantity > m_unitsPerTile)
 						{
 							nextValue = m_unitsPerTile;
 						}
 						else
 						{
-							nextValue = currentUnitNumbers + m_unitsSpawnNumber;
+							nextValue = currentUnitNumbers + spawningQuantity;
 						}
 
 						tile.setUnitNumbers(nextValue);
@@ -334,7 +367,7 @@ public class GameMode : MonoBehaviour {
             }
         }
 
-        lText.text = m_currentPlayer + "\nYour units number : " + units[(int)m_currentPlayer] + "\n Your control points : " + controlPoints[(int)m_currentPlayer] + "\n Your current score : " + m_victoryPoint[(int)m_currentPlayer] + " / 3";
+        lText.text = m_currentPlayer + "\nYour units number : " + units[(int)m_currentPlayer] + " / " + m_foodLimit[(int) m_currentPlayer] + "\n Your control points : " + controlPoints[(int)m_currentPlayer] + "\n Your current score : " + m_victoryPoint[(int)m_currentPlayer] + " / 3";
 
 		string tempText = "Player : Units / Control // Current score\n";
         
@@ -370,14 +403,11 @@ public class GameMode : MonoBehaviour {
 		m_delay = 0;
 		m_playerHUD.SetActive (false);
 		int[] controlPoints = new int[m_numberOfPlayers];
-
-		Debug.Log ("Current turn : " + m_beatsNumber + " / " + m_beatsFrequency);
+		m_lastWinner = PLAYERS.None;
 
 		//Test if its time to score
 		if (m_beatsNumber % m_beatsFrequency == 0)
 		{
-
-			Debug.Log ("A beats winner must be chosen");
 
 			PLAYERS beatsWinner;
 
@@ -420,8 +450,6 @@ public class GameMode : MonoBehaviour {
 				}
 			}
 
-			Debug.Log ((PLAYERS) beatsWinner + " / " + equality);
-
 			if (equality)
 			{
 				m_lastWinner = PLAYERS.None;
@@ -449,8 +477,8 @@ public class GameMode : MonoBehaviour {
 		//Display "the panel"
 		m_delay += Time.deltaTime;
 
-		if (m_delay < m_fadingSpeedPlayerTurn) {
-			value = (m_delay / m_fadingSpeedPlayerTurn);
+		if (m_delay < m_fadingSpeedSongsMenu) {
+			value = (m_delay / m_fadingSpeedSongsMenu);
 			panel.color = synthethiseFadingColor (panel.color, value);
 			text .color = synthethiseFadingColor (text.color, value);
 
@@ -459,12 +487,11 @@ public class GameMode : MonoBehaviour {
 			} else {
 				text.text = m_lastWinner + "\nhas won the last beat.\n\nChoose the next song !"; 
 			}
-		} else if (m_delay < 2 * m_fadingSpeedPlayerTurn && m_lastWinner == PLAYERS.None) {
-			value = 1 - ((m_delay - m_fadingSpeedPlayerTurn) / m_fadingSpeedPlayerTurn);
-			Debug.Log (value);
+		} else if (m_delay < 2 * m_fadingSpeedSongsMenu && m_lastWinner == PLAYERS.None) {
+			value = 1 - ((m_delay - m_fadingSpeedSongsMenu) / m_fadingSpeedSongsMenu);
 			panel.color = synthethiseFadingColor (panel.color, value);
 			text .color = synthethiseFadingColor (text.color, value);
-		} else if (m_delay > m_fadingSpeedPlayerTurn && m_lastWinner != PLAYERS.None) 
+		} else if (m_delay > m_fadingSpeedSongsMenu && m_lastWinner != PLAYERS.None) 
 		{
 			foreach (GameObject beatButton in m_songsButton) {
 				beatButton.SetActive (true);
@@ -477,20 +504,25 @@ public class GameMode : MonoBehaviour {
 			m_delay = 0;
             
             // Launching a random song
-            m_song_isPlayerBeat = false;
-            m_song_neutralBeat = (NEUTRAL_BEATS) Random.Range(0, MAX_NUMBER_OF_NEUTRAL_BEATS);
+			launchARandomNeutralSong();
 
-            m_musicManager.startTurnBeat(m_song_neutralBeat);
-
-			setGameState(GAME_STATE.PhaseBegins);
+			setGameState(GAME_STATE.DisplayCurrentTurn);
 		}
+	}
+
+	void launchARandomNeutralSong()
+	{
+		m_song_isPlayerBeat = false;
+		m_song_neutralBeat = (NEUTRAL_BEATS) Random.Range(0, MAX_NUMBER_OF_NEUTRAL_BEATS);
+		
+		m_musicManager.startPeriodBeat(m_song_neutralBeat);
 	}
 
 	public void selectMySong()
 	{
 		m_victoryPoint [(int)m_lastWinner]++;
 
-        m_musicManager.startTurnPlayer(m_lastWinner, m_victoryPoint[(int)m_lastWinner]);
+        m_musicManager.startPeriodPlayer(m_lastWinner, m_victoryPoint[(int)m_lastWinner]);
 
 		clearHUD ();
 
@@ -504,10 +536,8 @@ public class GameMode : MonoBehaviour {
 			}
 		}
 
-		setGameState (GAME_STATE.PhaseBegins);
-
-        m_lastWinner = PLAYERS.None;
-        m_delay = 0;
+		m_delay = 0;
+		setGameState (GAME_STATE.PhaseBegins);        
     }
 
 	void clearHUD()
@@ -534,6 +564,7 @@ public class GameMode : MonoBehaviour {
 		m_unitsPerTile = PlayerPrefs.GetInt(PlayerPreferences.m_unitsPerTile);
 		m_beatsFrequency = PlayerPrefs.GetInt(PlayerPreferences.m_beatsFrequency);
 		m_beatsToWin = PlayerPrefs.GetInt(PlayerPreferences.m_beatsToWin);
+		m_foodsPerVillage = PlayerPrefs.GetInt(PlayerPreferences.m_foodsPerVillage);
 
 		createTheMap ();
 	}
@@ -542,11 +573,13 @@ public class GameMode : MonoBehaviour {
 	{
 		m_players = new PLAYERS[m_numberOfPlayers];
 		m_victoryPoint = new int[m_numberOfPlayers];
+		m_foodLimit = new int[m_numberOfPlayers];
 
 		for (int i = 0; i < m_numberOfPlayers; ++i)
 		{
 			m_players[i] = (PLAYERS) (i);
 			m_victoryPoint[i] = 0;
+			m_foodLimit[i] = m_populationLimit;
 		}
 
 		shufflePlayers (m_numberOfPlayers);
@@ -581,13 +614,14 @@ public class GameMode : MonoBehaviour {
 		}
 
 		m_beatsNumber = 1;
+		launchARandomNeutralSong();
 		setGameState (GAME_STATE.PhaseBegins);
 	}
 
 
     void InitTheMapFor2Players_default()
-    {
-        Vector2 p1 = new Vector2(3, 2);
+    {        
+		Vector2 p1 = new Vector2(0, 0);
         Vector2 p2 = new Vector2(7, 6);
         List<Vector2> controlPoints = new List<Vector2>();
         List<Vector2> villages = new List<Vector2>();
@@ -642,6 +676,17 @@ public class GameMode : MonoBehaviour {
         Caves.Add(new Vector2(1, 6));
         Caves.Add(new Vector2(3, 6));
         Caves.Add(new Vector2(4, 6));
+
+		//to test the travel around the world;
+		//TODO : remove these lines
+		Vector2 zero = new Vector2(0, 0);
+		Vector2 extemity = new Vector2(9, 9);
+		p1 = zero;
+		p2 = extemity;
+		reprod.Add(zero);
+		Caves.Remove(zero);
+		reprod.Add(extemity);
+		Caves.Remove(extemity);
 
         foreach (GameObject hex in hexes)
         {
@@ -823,48 +868,38 @@ public class GameMode : MonoBehaviour {
 		return result;
 	}
 
-	public void displayBorders(GameObject p_target)
+	public List<string> displayBorders(GameObject p_target)
 	{
-		List<DIRECTIONS> directions = new List<DIRECTIONS>();
+		List<string> directions = new List<string>();
 
 		Vector2 position = getPerfectHexPosition (p_target);
 
+		Image image;
+
 		if (position.y == 0)
 		{
-			addThisDirection(directions, DIRECTIONS.NORTHEAST);
-			addThisDirection(directions, DIRECTIONS.NORTHWEST);
+			addThisDirection(directions, "North");
 		}
 
-		if (position.y == m_mapHeight)
+		if (position.y == m_mapHeight - 1)
 		{
-			addThisDirection(directions, DIRECTIONS.SOUTHEAST);
-			addThisDirection(directions, DIRECTIONS.SOUTHWEST);
+			addThisDirection(directions, "South");
 		}
 
 		if (position.x == 0)
 		{
-			addThisDirection(directions, DIRECTIONS.WEST);
-
-			if (position.y%2 == 0)
-			{
-				addThisDirection(directions, DIRECTIONS.NORTHWEST);
-				addThisDirection(directions, DIRECTIONS.SOUTHWEST);
-			}
+			addThisDirection(directions, "West");
 		}
 
-		if (position.x == m_mapWidth)
+		if (position.x == m_mapWidth - 1)
 		{
-			addThisDirection(directions, DIRECTIONS.EAST);
-		
-			if (position.y%2 == 0)
-			{
-				addThisDirection(directions, DIRECTIONS.NORTHEAST);
-				addThisDirection(directions, DIRECTIONS.SOUTHEAST);
-			}
+			addThisDirection(directions, "East");		
 		}
+
+		return directions;
 	}
 
-	void addThisDirection(List<DIRECTIONS> p_list, DIRECTIONS p_direction)
+	void addThisDirection(List<string> p_list, string p_direction)
 	{
 		if (!p_list.Contains(p_direction))
 		{
@@ -876,8 +911,53 @@ public class GameMode : MonoBehaviour {
     {
         if (p_source != p_target)
         {
-            Vector2 startIdx = getPerfectHexPosition(p_source);
-            Vector2 stopIdx = getPerfectHexPosition(p_target);
+
+			Vector2 startIdx = getPerfectHexPosition(p_source);
+			Vector2 stopIdx = getPerfectHexPosition(p_target);
+
+			//Used to go from one border of the map to an other
+			if (p_target.tag == Tags.m_arrow)
+			{
+				Vector2 coordinate;
+				float targetX = 0;
+				float targetY = 0;
+
+				GameObject arrowsTarget = null;
+
+				switch (p_target.name)
+				{
+				case "North" :
+					targetX = startIdx.x;
+					targetY = m_mapHeight - 1;
+					break;
+
+				case "South" :
+					targetX = startIdx.x;
+					targetY = 0;
+					break;
+
+				case "West" :
+					targetX = m_mapWidth - 1;
+					targetY = startIdx.y;
+					break;
+
+				case "East" :
+					targetX = 0;
+					targetY = startIdx.y;
+					break;
+
+				default :
+					break;
+				}
+
+				coordinate = new Vector2(targetX, targetY);
+				arrowsTarget = getTileFromIntegerCoord(coordinate);
+
+				if (arrowsTarget != null)
+				{
+					moveUnits(p_source, arrowsTarget, p_unitsNumber);
+				}
+			}
 
             if (stopIdx.y >= startIdx.y - 1 && stopIdx.y <= startIdx.y + 1)
             {
@@ -885,60 +965,137 @@ public class GameMode : MonoBehaviour {
                     || stopIdx.x >= (startIdx.x - 1 + (startIdx.y % 2)) && stopIdx.x <= (startIdx.x + (startIdx.y % 2)))
                 {
                    
-                    if (p_source.GetComponent<Tile>().getPlayer() != p_target.GetComponent<Tile>().getPlayer())
-                    {
-                        //It is an agression : we resolve it
-                        if (p_source.GetComponent<Tile>().getUnitNumbers() > p_target.GetComponent<Tile>().getUnitNumbers())
-                        {
-                            //Attacker wins: his units replace 
-                            p_target.GetComponent<Tile>().setPlayer(p_source.GetComponent<Tile>().getPlayer());
-                            p_target.GetComponent<Tile>().setIsMoved(true);
-
-							int newNumber = p_unitsNumber - p_target.GetComponent<Tile>().getUnitNumbers();
-                            p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
-
-                            p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
-                        }
-                        else
-                        {
-                            //Defensor wins: we just deduct his loss
-							int newNumber = p_target.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber;
-                            p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
-
-							p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
-
-                        }
-                    }
-                    else 
-                    {
-                        if (p_target.GetComponent<Tile>().getUnitNumbers() == 0)
-                        {
-                            p_target.GetComponent<Tile>().setIsMoved(true);
-                        }
-                        //It is a unit movement: we move up to 4 unit in the tile
-                        if (p_unitsNumber + p_target.GetComponent<Tile>().getUnitNumbers() <= m_unitsPerTile)
-                        {
-                            p_target.GetComponent<Tile>().setUnitNumbers(p_target.GetComponent<Tile>().getUnitNumbers() + p_unitsNumber);
-							p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
-                        }
-                        else
-                        {
-							int nbToMove = m_unitsPerTile - p_target.GetComponent<Tile>().getUnitNumbers();
-                            p_target.GetComponent<Tile>().setUnitNumbers(m_unitsPerTile);
-                            p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - nbToMove);
-                        }
-                    }
-
-                    p_source.GetComponent<Tile>().updateTokens();
-                    p_target.GetComponent<Tile>().updateTokens();
+					moveUnits(p_source, p_target, p_unitsNumber);
                 }
             }
         }
     }
 
+	void moveUnits(GameObject p_source, GameObject p_target, int p_unitsNumber)
+	{
+		if (p_source.GetComponent<Tile>().getPlayer() != p_target.GetComponent<Tile>().getPlayer())
+		{
+			//It is an agression : we resolve it
+			if (p_source.GetComponent<Tile>().getUnitNumbers() > p_target.GetComponent<Tile>().getUnitNumbers())
+			{
+				//Attacker wins: his units replace 
+				p_target.GetComponent<Tile>().setPlayer(p_source.GetComponent<Tile>().getPlayer());
+				p_target.GetComponent<Tile>().setIsMoved(true);
+				
+				int newNumber = p_unitsNumber - p_target.GetComponent<Tile>().getUnitNumbers();
+				p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
+				
+				p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
+			}
+			else
+			{
+				//Defensor wins: we just deduct his loss
+				int newNumber = p_target.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber;
+				p_target.GetComponent<Tile>().setUnitNumbers(newNumber);
+				
+				p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
+				
+			}
+		}
+		else 
+		{
+			if (p_target.GetComponent<Tile>().getUnitNumbers() == 0)
+			{
+				p_target.GetComponent<Tile>().setIsMoved(true);
+			}
+			//It is a unit movement: we move up to 4 unit in the tile
+			if (p_unitsNumber + p_target.GetComponent<Tile>().getUnitNumbers() <= m_unitsPerTile)
+			{
+				p_target.GetComponent<Tile>().setUnitNumbers(p_target.GetComponent<Tile>().getUnitNumbers() + p_unitsNumber);
+				p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - p_unitsNumber);
+			}
+			else
+			{
+				int nbToMove = m_unitsPerTile - p_target.GetComponent<Tile>().getUnitNumbers();
+				p_target.GetComponent<Tile>().setUnitNumbers(m_unitsPerTile);
+				p_source.GetComponent<Tile>().setUnitNumbers(p_source.GetComponent<Tile>().getUnitNumbers() - nbToMove);
+			}
+		}
+		
+		p_source.GetComponent<Tile>().updateTokens();
+		p_target.GetComponent<Tile>().updateTokens();
+	}
+
 	public PLAYERS getCurrentPlayer()
 	{
 		return m_currentPlayer;
+	}
+
+	public int getFoodForPlayer(PLAYERS p_player)
+	{
+		int result = 0;
+		Tile tile;
+		
+		GameObject[] hexes = GameObject.FindGameObjectsWithTag(Tags.m_tile);
+		foreach(GameObject hex in hexes)
+		{
+			tile = hex.GetComponent<Tile>();
+
+			if (tile.getPlayer() == p_player)
+			{
+				result += tile.getUnitNumbers();
+			}
+		}
+		
+		return result;
+		
+	}
+
+	public int getFoodLimitForPlayer(PLAYERS p_player)
+{
+		int result = m_populationLimit;
+		Tile tile;
+
+		GameObject[] hexes = GameObject.FindGameObjectsWithTag(Tags.m_tile);
+		foreach(GameObject hex in hexes)
+		{
+			tile = hex.GetComponent<Tile>();
+
+			if (tile.getTileType() == TILE_TYPE.Village)
+			{
+				if (tile.getPlayer() == p_player)
+				{
+					m_foodLimit[(int) p_player] += m_foodsPerVillage;
+				}
+			}
+		}
+
+		return result;
+
+	}
+
+	public void setFoodLimit(PLAYERS p_player, int p_delta)
+	{
+		m_foodLimit[(int) p_player] += p_delta;
+	}
+
+	public int getFoodPerVillage()
+	{
+		return m_foodsPerVillage;
+	}
+
+	public GameObject getTileFromIntegerCoord(Vector2 p_coord)
+	{
+		GameObject result = null;
+		Vector2 comparator;
+		GameObject[] hexes = GameObject.FindGameObjectsWithTag(Tags.m_tile);
+
+		foreach(GameObject hex in hexes)
+		{
+			comparator = getPerfectHexPosition(hex);
+
+			if (comparator == p_coord)
+			{
+				result = hex;
+				return result;
+			}
+		}
+		return result;
 	}
 }
 

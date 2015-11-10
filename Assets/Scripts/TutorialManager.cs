@@ -104,7 +104,7 @@ public class TutorialManager : MonoBehaviour {
 			break;
 
 		case 7 :
-			m_text.text = "By moving your notes on a case, you'll control it.\nYou can also use its bonus.";
+			m_text.text = "By moving your notes on a tile, you'll control it.\nYou can also use its bonus.";
 			m_base.GetComponent<MeshRenderer>().material = m_red;
 			m_secondaryBase.GetComponent<MeshRenderer>().material = m_blue;
 			break;

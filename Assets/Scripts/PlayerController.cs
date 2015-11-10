@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class PlayerController : MonoBehaviour
     private Tile finishTile;
 
     private GameMode gameMode;
-	private int m_numberOfUnitsToDisplace = 0;
+	private int m_numberOfUnitsToMove = 0;
 
     // Use this for initialization
     void Start()
@@ -34,8 +35,9 @@ public class PlayerController : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit))
             {
-                if (hit.collider.tag == "Tile")
+                if (hit.collider.tag == Tags.m_tile)
                 {
+
                     startingTile = hit.collider.gameObject.GetComponent<Tile>();
 
 					if (startingTile.getPlayer() != gameMode.getCurrentPlayer())
@@ -43,17 +45,18 @@ public class PlayerController : MonoBehaviour
 
                     if (!startingTile.isMoved() && startingTile.getUnitNumbers() > 0)
                     {
-                        gameMode.displayBorders(startingTile.gameObject);
 
+						startingTile.displayArrow(gameMode.displayBorders(startingTile.gameObject));
+						
 						if (Input.GetButton("SplitUnits"))
 						{
-							m_numberOfUnitsToDisplace = 1;
-							Debug.Log ("Shitf used");
+							m_numberOfUnitsToMove = 1;
 						}
 						else
 						{
-							m_numberOfUnitsToDisplace = startingTile.getUnitNumbers();
+							m_numberOfUnitsToMove = startingTile.getUnitNumbers();
 						}
+
                         dragging = true;
                     }
                 }
@@ -65,16 +68,24 @@ public class PlayerController : MonoBehaviour
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
             if (Physics.Raycast(ray, out hit))
             {
-                if (hit.collider.tag == "Tile")
+                if (hit.collider.tag == Tags.m_tile)
                 {
                     finishTile = hit.collider.gameObject.GetComponent<Tile>();
-					gameMode.displacement(startingTile.gameObject, finishTile.gameObject, m_numberOfUnitsToDisplace);
-					m_numberOfUnitsToDisplace = 0;
+					gameMode.displacement(startingTile.gameObject, finishTile.gameObject, m_numberOfUnitsToMove);
+					m_numberOfUnitsToMove = 0;
                 }
+
+				if (hit.collider.tag == Tags.m_arrow)
+				{
+					gameMode.displacement(startingTile.gameObject, hit.collider.gameObject, m_numberOfUnitsToMove);
+					m_numberOfUnitsToMove = 0;
+				}
             }
 
+			startingTile.hideArrows();
             dragging = false;
         }
     }

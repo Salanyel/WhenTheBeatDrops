@@ -13,7 +13,7 @@ public class UILibrary : MonoBehaviour {
 		}
 		catch (UnityException e)
 		{
-
+			Debug.Log (e.Message);
 		}
 	}
 

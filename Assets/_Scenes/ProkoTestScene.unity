@@ -184,6 +184,14 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11445578, guid: f9a8ec77318f76448a905152eaa7652f, type: 2}
+      propertyPath: m_fadingSpeedTurn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445578, guid: f9a8ec77318f76448a905152eaa7652f, type: 2}
+      propertyPath: m_fadingSpeedPlayerTurn
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f9a8ec77318f76448a905152eaa7652f, type: 2}
   m_IsPrefabParent: 0
@@ -382,7 +390,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22483462, guid: 2a1b7e5d976b7db44b3662c28ea7d801, type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 22483462, guid: 2a1b7e5d976b7db44b3662c28ea7d801, type: 2}
       propertyPath: m_AnchoredPosition.x
@@ -424,18 +432,14 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 11480376, guid: 2a1b7e5d976b7db44b3662c28ea7d801, type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1225900037}
     - target: {fileID: 11467446, guid: 2a1b7e5d976b7db44b3662c28ea7d801, type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1225900037}
-    - target: {fileID: 11479240, guid: 2a1b7e5d976b7db44b3662c28ea7d801, type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1225900037}
+    - target: {fileID: 11467446, guid: 2a1b7e5d976b7db44b3662c28ea7d801, type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: mySong
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2a1b7e5d976b7db44b3662c28ea7d801, type: 2}
   m_IsPrefabParent: 0
@@ -496,7 +500,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 488090, guid: c325faacedc01314898ca604ca0e2adf, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -4.50500011
       objectReference: {fileID: 0}
     - target: {fileID: 488090, guid: c325faacedc01314898ca604ca0e2adf, type: 2}
       propertyPath: m_LocalPosition.y
