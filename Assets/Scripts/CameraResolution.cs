@@ -31,8 +31,8 @@ public class CameraResolution : MonoBehaviour
 
         topLeft = new Vector2(2.5f, -3.5f);
         topRight = new Vector2(6.5f, -3.5f);
-        bottomLeft = new Vector2(2.5f, -8);
-        bottomRight = new Vector2(6.5f, -8);
+        bottomLeft = new Vector2(2.5f, -9);
+        bottomRight = new Vector2(6.5f, -9);
 
         updateCameraViewport();
     }
