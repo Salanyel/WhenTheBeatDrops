@@ -18,6 +18,9 @@ public class CameraResolution : MonoBehaviour
     private Vector2 bottomLeft;
     private Vector2 bottomRight;
 
+    private bool isMovingToward;
+    private Vector3 MovingTowardPoint;
+
     /*	-----
 		Return :
 		Parameters :
@@ -44,34 +47,45 @@ public class CameraResolution : MonoBehaviour
 	*/
     void Update()
     {
+        if (!isMovingToward)
+        {
+            // Horizontal move
+            if (Input.mousePosition.x < (Screen.width * 0.10) || Input.GetAxis("Horizontal") < 0)
+            {
+                //the mouse is in the first third of the screen: camera moves left
+                transform.Translate(-m_speed * Time.deltaTime, 0, 0);
+                transform.position = new Vector3(Mathf.Max(transform.position.x, topLeft.x), transform.position.y, -4);
+            }
+            else if ((Input.mousePosition.x > (Screen.width * 0.90) && Input.mousePosition.y > (Screen.height * 0.10)) || Input.GetAxis("Horizontal") > 0)
+            {
+                //the mouse is in the last third of the screen: camera moves right
+                transform.Translate(m_speed * Time.deltaTime, 0, 0);
+                transform.position = new Vector3(Mathf.Min(transform.position.x, topRight.x), transform.position.y, -4);
+            }
 
-        // Horizontal move
-        if (Input.mousePosition.x < (Screen.width * 0.10) || Input.GetAxis("Horizontal") < 0)
-        {
-            //the mouse is in the first third of the screen: camera moves left
-            transform.Translate(-m_speed * Time.deltaTime, 0, 0);
-            transform.position = new Vector3(Mathf.Max(transform.position.x, topLeft.x), transform.position.y, -4);
-        }
-        else if ((Input.mousePosition.x > (Screen.width * 0.90) && Input.mousePosition.y > (Screen.height * 0.10)) || Input.GetAxis("Horizontal") > 0)
-        {
-            //the mouse is in the last third of the screen: camera moves right
-            transform.Translate(m_speed * Time.deltaTime, 0, 0);
-            transform.position = new Vector3(Mathf.Min(transform.position.x, topRight.x), transform.position.y, -4);
-        }
+            //Vertical move by mouse
+            if (Input.mousePosition.y < (Screen.height * 0.10) || Input.GetAxis("Vertical") < 0)
+            {
+                //the mouse is in the bottom third of the screen: camera moves down
+                transform.Translate(0, -m_speed * Time.deltaTime, 0);
+                transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y, bottomLeft.y), -4);
+            }
+            else if ((Input.mousePosition.y > (Screen.height * 0.90) && Input.mousePosition.x < (Screen.width * 0.90)) || Input.GetAxis("Vertical") > 0)
+            {
+                //the mouse is in the top third of the screen: camera moves up
+                transform.Translate(0, m_speed * Time.deltaTime, 0);
+                transform.position = new Vector3(transform.position.x, Mathf.Min(transform.position.y, topLeft.y), -4);
 
-        //Vertical move by mouse
-        if (Input.mousePosition.y < (Screen.height * 0.10) || Input.GetAxis("Vertical") < 0)
-        {
-            //the mouse is in the bottom third of the screen: camera moves down
-            transform.Translate(0, -m_speed * Time.deltaTime, 0);
-            transform.position = new Vector3(transform.position.x, Mathf.Max(transform.position.y, bottomLeft.y), -4);
+            }
         }
-        else if ((Input.mousePosition.y > (Screen.height * 0.90) && Input.mousePosition.x < (Screen.width * 0.90)) || Input.GetAxis("Vertical") > 0)
+        else
         {
-            //the mouse is in the top third of the screen: camera moves up
-            transform.Translate(0, m_speed * Time.deltaTime, 0);
-            transform.position = new Vector3(transform.position.x, Mathf.Min(transform.position.y, topLeft.y), -4);
-
+            float step = m_speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, MovingTowardPoint, step);
+            if(transform.position == MovingTowardPoint)
+            {
+                isMovingToward = false;
+            }
         }
         updateCameraViewport();
     }
@@ -132,5 +146,34 @@ public class CameraResolution : MonoBehaviour
         myRect.Set(myRect.x, myRect.y, myRect.width, p_height);
 
         m_camera.rect = myRect;
+    }
+
+    void moveTo(string direction)
+    {
+        switch (direction)
+        {
+            case "North":
+                MovingTowardPoint = new Vector3(transform.position.x, topLeft.y, transform.position.z);
+                isMovingToward = true;
+                break;
+
+            case "South":
+                MovingTowardPoint = new Vector3(transform.position.x, bottomLeft.y, transform.position.z);
+                isMovingToward = true;
+                break;
+
+            case "West":
+                MovingTowardPoint = new Vector3(topLeft.x, transform.position.y, transform.position.z);
+                isMovingToward = true;
+                break;
+
+            case "East":
+                MovingTowardPoint = new Vector3(topRight.x, transform.position.y, transform.position.z);
+                isMovingToward = true;
+                break;
+
+            default:
+                break;
+        }
     }
 }
