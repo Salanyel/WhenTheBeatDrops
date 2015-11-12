@@ -633,7 +633,7 @@ public class GameMode : MonoBehaviour {
 
     void InitTheMapFor2Players_default()
     {        
-		Vector2 p1 = new Vector2(0, 0);
+		Vector2 p1 = new Vector2(2, 3);
         Vector2 p2 = new Vector2(7, 6);
         List<Vector2> controlPoints = new List<Vector2>();
         List<Vector2> villages = new List<Vector2>();
