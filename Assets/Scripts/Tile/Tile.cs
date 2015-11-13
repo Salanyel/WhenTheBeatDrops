@@ -48,19 +48,6 @@ public class Tile : MonoBehaviour {
 	void Update()
 	{
 		setMaterial ();
-		GameObject environment;
-
-		if (m_tileType != TILE_TYPE.Neutral && m_environment == null)
-		{
-
-			//m_pointFroEnvironment = new Vector3(-0.283f, 0.089f, -0.265f);
-
-			environment = m_environments[(int) m_tileType];
-			m_environment = (GameObject) Instantiate(environment, environment.transform.position, environment.transform.rotation);
-			m_environment.transform.parent = gameObject.transform;
-			m_environment.transform.position = m_environmentPosition[(int) m_tileType] + transform.position;
-		}
-
 
 		//Test for the cave
 		if (m_unitNumbers > 0 && m_tileType == TILE_TYPE.Cave)
@@ -116,7 +103,25 @@ public class Tile : MonoBehaviour {
 
 	public void setTileType(TILE_TYPE p_type)
 	{
+
+		GameObject environment;
+
 		m_tileType = p_type;
+
+		if (m_tileType != TILE_TYPE.Neutral && m_environment == null)
+		{
+
+			if (m_environment != null)
+			{
+				Destroy(m_environment);
+				m_environment = null;
+			}
+			
+			environment = m_environments[(int) m_tileType];
+			m_environment = (GameObject) Instantiate(environment, environment.transform.position, environment.transform.rotation);
+			m_environment.transform.parent = gameObject.transform;
+			m_environment.transform.position = m_environmentPosition[(int) m_tileType] + transform.position;
+		}
 	}
 
 	public void setUnitNumbers(int p_number)

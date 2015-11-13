@@ -534,9 +534,12 @@ public class GameMode : MonoBehaviour {
 	{
 		m_victoryPoint [(int)m_lastWinner]++;
 
-		m_song_isPlayerBeat = true;
-		m_song_playerBeat = m_lastWinner;
-        m_musicManager.startPeriodPlayer(m_lastWinner, m_victoryPoint[(int)m_lastWinner]);
+		if (m_victoryPoint[(int) m_lastWinner] < m_beatsToWin)
+		{
+			m_song_isPlayerBeat = true;
+			m_song_playerBeat = m_lastWinner;
+	        m_musicManager.startPeriodPlayer(m_lastWinner, m_victoryPoint[(int)m_lastWinner]);
+		}
 
 		clearHUD ();
 
