@@ -65,9 +65,12 @@ public class GameMode : MonoBehaviour {
     NEUTRAL_BEATS m_song_neutralBeat;
     MusicManager m_musicManager;
 
+	//Game management
+	private CameraResolution m_camera;
 
     void Start () {
         m_musicManager = GameObject.FindGameObjectWithTag(Tags.m_musicManager).GetComponent<MusicManager>();
+		m_camera = GameObject.FindGameObjectWithTag(Tags.m_mainCamera).GetComponent<CameraResolution>();
 
 		if (PlayerPrefs.HasKey(PlayerPreferences.m_init))
 		{
@@ -692,6 +695,7 @@ public class GameMode : MonoBehaviour {
 		//to test the travel around the world;
 
 		//TODO : remove these lines
+		p1 = new Vector2(0, 2);
 		/*Vector2 zero = new Vector2(0, 0);
 		Vector2 extemity = new Vector2(9, 9);
 		p1 = zero;
@@ -927,6 +931,7 @@ public class GameMode : MonoBehaviour {
 
 			Vector2 startIdx = getPerfectHexPosition(p_source);
 			Vector2 stopIdx = getPerfectHexPosition(p_target);
+			string direction = "";
 
 			//Used to go from one border of the map to an other
 			if (p_target.tag == Tags.m_arrow)
@@ -940,21 +945,25 @@ public class GameMode : MonoBehaviour {
 				switch (p_target.name)
 				{
 				case "North" :
+					direction = "South";
 					targetX = startIdx.x;
 					targetY = m_mapHeight - 1;
 					break;
 
 				case "South" :
+					direction = "North";
 					targetX = startIdx.x;
 					targetY = 0;
 					break;
 
 				case "West" :
+					direction = "East";
 					targetX = m_mapWidth - 1;
 					targetY = startIdx.y;
 					break;
 
 				case "East" :
+					direction = "West";
 					targetX = 0;
 					targetY = startIdx.y;
 					break;
@@ -968,6 +977,7 @@ public class GameMode : MonoBehaviour {
 
 				if (arrowsTarget != null)
 				{
+					m_camera.moveTo(direction);
 					moveUnits(p_source, arrowsTarget, p_unitsNumber);
 				}
 			}

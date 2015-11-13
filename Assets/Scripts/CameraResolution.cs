@@ -148,8 +148,9 @@ public class CameraResolution : MonoBehaviour
         m_camera.rect = myRect;
     }
 
-    void moveTo(string direction)
+    public void moveTo(string direction)
     {
+
         switch (direction)
         {
             case "North":
