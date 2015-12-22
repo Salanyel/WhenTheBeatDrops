@@ -384,7 +384,7 @@ public class GameMode : MonoBehaviour {
         
         for (int i = 0; i < m_numberOfPlayers; ++i)
         {
-            tempText += "Player " + (i + 1) + " : " + units[i] + " / " + controlPoints[i] + " // " + m_victoryPoint[i] + "\n";
+            tempText += m_players[i] + " : " + units[i] + " / " + controlPoints[i] + " // " + m_victoryPoint[i] + "\n";
         }
         rText.text = tempText;
     }
